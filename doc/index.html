@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html class="writer-html4" lang="ja" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>mdx REST Client for Python documentation</title><link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/print.css" type="text/css" />
+      <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+      <script>
+          var DOCUMENTATION_OPTIONS = {
+              URL_ROOT:'./',
+              VERSION:'',
+              LANGUAGE:'ja',
+              COLLAPSE_INDEX:false,
+              FILE_SUFFIX:'.html',
+              HAS_SOURCE:  true,
+              SOURCELINK_SUFFIX: '.txt'
+          };
+      </script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/translations.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html#document-index" class="icon icon-home"> mdx REST Client for Python
+          </a>
+              <div class="version">
+                22.04.1
+              </div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="index.html#document-vcpsdk">Mdx Client</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html#document-index">mdx REST Client for Python</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html#document-index" class="icon icon-home"></a> &raquo;</li>
+      <li>mdx REST Client for Python  documentation</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="section" id="mdx-rest-client-for-python">
+<h1>mdx REST Client for Python<a class="headerlink" href="#mdx-rest-client-for-python" title="Permalink to this headline">¶</a></h1>
+<div class="toctree-wrapper compound">
+<span id="document-vcpsdk"></span><div class="section" id="mdx-client">
+<h2>Mdx Client<a class="headerlink" href="#mdx-client" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="vcpsdk.plugins.mdx_ext.MdxResourceExt">
+<em class="property">class </em><code class="descname">MdxResourceExt</code><span class="sig-paren">(</span><em>init_token=None</em>, <em>endpoint='https://oprpl.mdx.jp'</em><span class="sig-paren">)</span><a class="headerlink" href="#vcpsdk.plugins.mdx_ext.MdxResourceExt" title="Permalink to this definition">¶</a></dt>
+<dd><p>mdx REST API にアクセスするためのPythonクライアントライブラリ。</p>
+<p>mdx REST API による仮想マシンの作成、状態取得、ネットワーク設定などの機能を提供する。</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>init_token</strong> -- mdx ユーザポータルから取得した mdx REST API 認証トークン</li>
+<li><strong>endpoint</strong> -- mdx REST API エンドポイント URL (オプショナル)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="vcpsdk.plugins.mdx_ext.MdxResourceExt.add_allow_acl_ipv4_info">
+<code class="descname">add_allow_acl_ipv4_info</code><span class="sig-paren">(</span><em>allow_acl_spec</em><span class="sig-paren">)</span><a class="headerlink" href="#vcpsdk.plugins.mdx_ext.MdxResourceExt.add_allow_acl_ipv4_info" title="Permalink to this definition">¶</a></dt>
+<dd><p>指定したセグメントにAllow ACL IPv4を追加する</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>allow_acl_spec</strong> -- 以下のような、追加するAllow ACL IPv4の仕様</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-json"><div class="highlight"><pre><span></span>{
+  &quot;segment&quot;: ネットワークセグメントID
+  &quot;src_address&quot;: Src IPv4アドレス
+  &quot;src_mask&quot;: Srcマスク
+  &quot;src_port&quot;: Srcポート
+  &quot;dst_address&quot;: Dst IPv4アドレス
+  &quot;dst_mask&quot;: Dstマスクの文字列表現
+  &quot;dst_port&quot;: Dstポートの文字列表現
+  &quot;protocol&quot;: プロトコル &quot;ICMP&quot; &quot;TCP&quot; &quot;UDP&quot; のいずれか
+}
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="vcpsdk.plugins.mdx_ext.MdxResourceExt.add_dnat">
+<code class="descname">add_dnat</code><span class="sig-paren">(</span><em>dnat_spec</em><span class="sig-paren">)</span><a class="headerlink" href="#vcpsdk.plugins.mdx_ext.MdxResourceExt.add_dnat" title="Permalink to this definition">¶</a></dt>
+<dd><p>指定したセグメントにDNATを追加する</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>dnat_spec</strong> -- 以下のような DNAT 設定情報</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-json"><div class="highlight"><pre><span></span>{
+  &quot;pool_address&quot;: 転送元グローバルIPv4アドレス。プロジェクトの未使用グローバルIPアドレスを指定する。
+  &quot;segument&quot;: ネットワークセグメントID
+  &quot;dst_address&quot;: 転送先プライベートIPアドレス。セグメントIPアドレス範囲内のIPアドレスを指定する。
+}
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="vcpsdk.plugins.mdx_ext.MdxResourceExt.delete_allow_acl_ipv4_info">
+<code class="descname">delete_allow_acl_ipv4_info</code><span class="sig-paren">(</span><em>acl_ipv4_id</em><span class="sig-paren">)</span><a class="headerlink" href="#vcpsdk.plugins.mdx_ext.MdxResourceExt.delete_allow_acl_ipv4_info" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>acl_ipv4_id</strong> -- 削除対象の Allow ACL IPv4 ID</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="vcpsdk.plugins.mdx_ext.MdxResourceExt.delete_dnat">
+<code class="descname">delete_dnat</code><span class="sig-paren">(</span><em>dnat_id</em><span class="sig-paren">)</span><a class="headerlink" href="#vcpsdk.plugins.mdx_ext.MdxResourceExt.delete_dnat" title="Permalink to this definition">¶</a></dt>
+<dd><p>DNATの削除を実行する</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>dnat_id</strong> -- DNAT ID</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="vcpsdk.plugins.mdx_ext.MdxResourceExt.deploy_vm">
+<code class="descname">deploy_vm</code><span class="sig-paren">(</span><em>vm_name</em>, <em>vm_spec</em>, <em>wait_for=True</em><span class="sig-paren">)</span><a class="headerlink" href="#vcpsdk.plugins.mdx_ext.MdxResourceExt.deploy_vm" title="Permalink to this definition">¶</a></dt>
+<dd><p>仮想マシンのデプロイを実行する。wait_forが <code class="docutils literal"><span class="pre">True</span></code> の場合、仮想マシンにIPv4アドレスが付与されるまで待つ。</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>vm_name</strong> -- 仮想マシン名</li>
+<li><strong>vm_spec</strong> -- 仮想マシンの仕様（ハードウェアのカスタマイズ項目）</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-json"><div class="highlight"><pre><span></span>{
+  &quot;catalog&quot;: カタログID
+  &quot;disk_size&quot;: 仮想ディスクサイズ(GB)
+  &quot;gpu&quot;: GPU数(数値を文字列で指定)
+  &quot;pack_type&quot;: パックタイプ(※通常プロジェクトの場合に指定) &quot;gpu&quot; または &quot;cpu&quot; を指定
+  &quot;pack_num&quot;: パック数(※通常プロジェクトの場合に指定)
+  &quot;network_adapters&quot;: [
+     {
+        &quot;adapter_number&quot;: ネットワーク番号
+        &quot;segment&quot;: ネットワークセグメントID
+     }
+  ],
+  &quot;shared_key&quot;: 仮想マシンへのSSH接続用公開鍵の文字列
+  &quot;storage_network&quot;: ストレージネットワーク &quot;sr-iov&quot;, &quot;pvrdma&quot;, &quot;portgroup&quot; のいずれかを指定
+  &quot;template_name&quot;: vCenter上の仮想マシンテンプレート名
+}
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>wait_for</strong> -- 仮想マシンにIPv4アドレスが付与されるまで待つ場合 <code class="docutils literal"><span class="pre">True</span></code> を指定</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">仮想マシン情報。詳細は get_vm_info() を参照のこと。</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="vcpsdk.plugins.mdx_ext.MdxResourceExt.destroy_vm">
+<code class="descname">destroy_vm</code><span class="sig-paren">(</span><em>vm_name</em>, <em>wait_for=True</em><span class="sig-paren">)</span><a class="headerlink" href="#vcpsdk.plugins.mdx_ext.MdxResourceExt.destroy_vm" title="Permalink to this definition">¶</a></dt>
+<dd><p>仮想マシンの削除を実行する。事前に仮想マシンを PowerOFF 状態にしておく必要がある。</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>vm_name</strong> -- 仮想マシン名</li>
+<li><strong>wait_for</strong> -- 削除完了を待つ場合 <code class="docutils literal"><span class="pre">True</span></code> を指定</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="vcpsdk.plugins.mdx_ext.MdxResourceExt.dnat_iter">
+<code class="descname">dnat_iter</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#vcpsdk.plugins.mdx_ext.MdxResourceExt.dnat_iter" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="vcpsdk.plugins.mdx_ext.MdxResourceExt.get_allow_acl_ipv4_info">
+<code class="descname">get_allow_acl_ipv4_info</code><span class="sig-paren">(</span><em>segment_id</em><span class="sig-paren">)</span><a class="headerlink" href="#vcpsdk.plugins.mdx_ext.MdxResourceExt.get_allow_acl_ipv4_info" title="Permalink to this definition">¶</a></dt>
+<dd><p>Allow ACL IPv4情報の取得</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>segment_id</strong> -- ネットワークセグメントID</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">以下のような、プロジェクトに属するAllow ACL IPv4の情報のリスト</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-json"><div class="highlight"><pre><span></span>[
+  {
+    &quot;uuid&quot;: Allo ACL IPv4 ID
+    &quot;src_address&quot;: Srcアドレス
+    &quot;src_mask&quot;:  Srcマスク (string で指定　例: &quot;24&quot;)
+    &quot;src_port&quot;: Srcポート (string)
+    &quot;dst_address&quot;: Dstアドレス
+    &quot;dst_mask&quot;: Dstマスク(string で指定　例: &quot;24&quot;)
+    &quot;dst_port&quot;: Dstポート (string)
+    &quot;protocol&quot;: プロトコル &quot;ICMP&quot; &quot;TCP&quot; &quot;UDP&quot; のいずれか
+  }
+]
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="vcpsdk.plugins.mdx_ext.MdxResourceExt.get_assigned_projects">
+<code class="descname">get_assigned_projects</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#vcpsdk.plugins.mdx_ext.MdxResourceExt.get_assigned_projects" title="Permalink to this definition">¶</a></dt>
+<dd><p>ユーザに紐付いたプロジェクト情報を取得する</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">以下のような、プロジェクト情報のリスト</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-json"><div class="highlight"><pre><span></span>[
+  {
+    &quot;uuid&quot;: 機関ID
+    &quot;name&quot;: 機関名
+    &quot;projects&quot;: [
+       {
+          &quot;uuid&quot;: プロジェクトID
+          &quot;name&quot;: プロジェクト名
+          &quot;type&quot;: プロジェクトのタイプ &quot;専有&quot; &quot;通常&quot; のいずれか
+          &quot;expired&quot;: プロジェクトの期限が切れたか否か (boolean)
+       }
+    ]
+  }
+]
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="vcpsdk.plugins.mdx_ext.MdxResourceExt.get_current_project">
+<code class="descname">get_current_project</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#vcpsdk.plugins.mdx_ext.MdxResourceExt.get_current_project" title="Permalink to this definition">¶</a></dt>
+<dd><p>操作対象のmdxのプロジェクトの取得</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">以下のような、プロジェクトに属するAllow ACL IPv4の情報のリスト</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-json"><div class="highlight"><pre><span></span>{
+   &quot;uuid&quot;: プロジェクトID
+   &quot;name&quot;: プロジェクト名
+   &quot;type&quot;: プロジェクトのタイプ &quot;専有&quot; &quot;通常&quot; のいずれか
+   &quot;expired&quot;: プロジェクトの期限が切れたか否か (boolean)
+}
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="vcpsdk.plugins.mdx_ext.MdxResourceExt.get_dnat">
+<code class="descname">get_dnat</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#vcpsdk.plugins.mdx_ext.MdxResourceExt.get_dnat" title="Permalink to this definition">¶</a></dt>
+<dd><p>プロジェクトに属するDNAT情報の取得</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">以下のような、プロジェクトに属する DNAT 情報のリスト</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-json"><div class="highlight"><pre><span></span>[
+  {
+    &quot;uuid&quot;: DNAT ID
+    &quot;pool_address&quot;: 転送元グローバルIPv4アドレス
+    &quot;segument&quot;: セグメント名
+    &quot;dst_address&quot;: 転送先プライベートIPアドレス
+  }
+]
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="vcpsdk.plugins.mdx_ext.MdxResourceExt.get_project_history">
+<code class="descname">get_project_history</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#vcpsdk.plugins.mdx_ext.MdxResourceExt.get_project_history" title="Permalink to this definition">¶</a></dt>
+<dd><p>プロジェクト内における操作履歴の情報を取得する</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">以下のような、プロジェクト操作履歴情報のリスト</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-json"><div class="highlight"><pre><span></span>[
+  {
+    &quot;uuid&quot;: 操作履歴ID
+    &quot;project&quot;: プロジェクトID
+    &quot;user_name&quot;: 操作ユーザ名
+    &quot;type&quot;: 操作種別
+    &quot;object_uuid&quot;: 操作対象オブジェクトID
+    &quot;object_name&quot;: 操作対象オブジェクト名
+    &quot;start_datetime&quot;: 開始日付 (YYYY-mm-dd HH:MM:SS)
+    &quot;end_datetime&quot;: 終了日付 (YYYY-mm-dd HH:MM:SS)
+    &quot;status&quot;: ステータス &quot;Running&quot; &quot;Completed&quot; &quot;Failed&quot; のいずれか
+    &quot;progress&quot;: 進捗率 (%)
+    &quot;error_message&quot;: エラーメッセージ
+    &quot;error_detail&quot;: エラー詳細
+  }
+]
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="vcpsdk.plugins.mdx_ext.MdxResourceExt.get_segment_summary">
+<code class="descname">get_segment_summary</code><span class="sig-paren">(</span><em>segment_id</em><span class="sig-paren">)</span><a class="headerlink" href="#vcpsdk.plugins.mdx_ext.MdxResourceExt.get_segment_summary" title="Permalink to this definition">¶</a></dt>
+<dd><p>ネットワークセグメントのサマリ情報を取得する</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>segment_id</strong> -- ネットワークセグメントID</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">以下のような、ネットワークセグメントのサマリ情報</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-json"><div class="highlight"><pre><span></span>{
+  &quot;vlan_id&quot;: VLAN ID
+  &quot;vni&quot;: VNI
+  &quot;ip_range&quot;: IPアドレス範囲
+}
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="vcpsdk.plugins.mdx_ext.MdxResourceExt.get_segments">
+<code class="descname">get_segments</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#vcpsdk.plugins.mdx_ext.MdxResourceExt.get_segments" title="Permalink to this definition">¶</a></dt>
+<dd><p>プロジェクトに紐付いたネットワークセグメント情報を取得する。</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">以下のような、プロジェクトに紐付いたネットワークセグメント情報のリスト</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-json"><div class="highlight"><pre><span></span>[
+  {
+    &quot;uuid&quot;: ネットワークセグメントID
+    &quot;name&quot;: ネットワークセグメント名
+    &quot;default&quot;: プロジェクト作成時に作成されるデフォルトのネットワークセグメントか否か(boolean)
+  }
+]
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="vcpsdk.plugins.mdx_ext.MdxResourceExt.get_vm_catalogs">
+<code class="descname">get_vm_catalogs</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#vcpsdk.plugins.mdx_ext.MdxResourceExt.get_vm_catalogs" title="Permalink to this definition">¶</a></dt>
+<dd><p>プロジェクトに紐づいた仮想マシンデプロイカタログ情報を取得する</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">以下のような、カタログのリスト</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-json"><div class="highlight"><pre><span></span>[
+  {
+    &quot;uuid&quot;: カタログID
+    &quot;name&quot;: カタログ名
+    &quot;type&quot;: カタログのタイプ
+    &quot;template_name&quot;: vCenter上の仮想マシンテンプレート名
+    &quot;os_type&quot;: OS種別 &quot;Linux&quot;, &quot;Windows&quot; のいずれか
+    &quot;os_name&quot;: OS名 (例: &quot;CentOS&quot;)
+    &quot;os_version&quot;: OSバージョン
+    &quot;hw_version&quot;: ハードウェアバージョン
+    &quot;description&quot;: 説明
+    &quot;login_username&quot;: OSログインユーザ名
+  }
+]
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="vcpsdk.plugins.mdx_ext.MdxResourceExt.get_vm_info">
+<code class="descname">get_vm_info</code><span class="sig-paren">(</span><em>vm_name</em><span class="sig-paren">)</span><a class="headerlink" href="#vcpsdk.plugins.mdx_ext.MdxResourceExt.get_vm_info" title="Permalink to this definition">¶</a></dt>
+<dd><p>仮想マシンの詳細情報を取得する</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>vm_name</strong> -- 仮想マシン名</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">以下のような仮想マシン情報</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-json"><div class="highlight"><pre><span></span>{
+  &quot;name&quot;: 仮想マシン名
+  &quot;os_type&quot;: OSタイプ
+  &quot;status&quot;: 仮想マシンの状態 &quot;PowerON&quot; &quot;PowerOFF&quot; &quot;Suspended&quot; &quot;NotFound&quot; &quot;Deploying&quot; &quot;Detached&quot; のいずれか
+  &quot;vmware_tools&quot;: [
+     {
+       &quot;status&quot;: VMware Tools状態
+       &quot;version&quot;: VMware Toolsバージョン
+     }
+  ],
+  &quot;cpu&quot;: CPU数
+  &quot;memory&quot;: メモリ量の文字列表現 (例: &quot;2 GB&quot;)
+  &quot;gpu&quot;: GPU数の文字列表現 (例: &quot;1&quot;)
+  &quot;service_networks&quot;: [
+    {
+      &quot;adapter_number&quot;: ネットワーク番号
+      &quot;ipv4_address&quot;: IPv4アドレスのリスト
+      &quot;ipv6_address&quot;: IPv6アドレスのリスト
+      &quot;segment&quot;: ネットワークセグメント名
+    }
+  ],
+  &quot;storage_networks&quot;: [
+    {
+      &quot;adapter_number&quot;: ネットワーク番号
+      &quot;ipv4_address&quot;: IPv4アドレスのリスト
+      &quot;ipv6_address&quot;: IPv6アドレスのリスト
+      &quot;type&quot;: ネットワークタイプ &quot;sr-iov&quot;, &quot;pvrdma&quot;, &quot;portgroup&quot; のいずれか
+    }
+  ],
+  &quot;hard_disks&quot;: [
+    {
+      &quot;disk_number&quot;: 仮想ディスク番号
+      &quot;device_key&quot;: 仮想ディスクデバイスキー
+      &quot;capacity&quot;: 仮想ディスクサイズ
+      &quot;datastore&quot;: データストア名
+    }
+  ],
+  &quot;dvd_media&quot;: ゲストOSがマウントしているISOイメージ
+  &quot;vcenter&quot;: vCenter名
+  &quot;esxi&quot;: ESXi名
+  &quot;pack_type&quot;: パックタイプ &quot;cpu&quot;, &quot;gpu&quot; のいずれか
+  &quot;pack_num&quot;: パック数
+}
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="vcpsdk.plugins.mdx_ext.MdxResourceExt.get_vm_list">
+<code class="descname">get_vm_list</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#vcpsdk.plugins.mdx_ext.MdxResourceExt.get_vm_list" title="Permalink to this definition">¶</a></dt>
+<dd><p>プロジェクトに属する仮想マシン情報を取得する</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">以下のような、仮想マシン情報のリスト</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-json"><div class="highlight"><pre><span></span>[
+  {
+    &quot;uuid&quot;: 仮想マシンID
+    &quot;name&quot;: 仮想マシン名
+    &quot;status&quot;: 仮想マシン状態 &quot;PowerON&quot; &quot;PowerOFF&quot; &quot;Suspended&quot; &quot;NotFound&quot; &quot;Deploying&quot; &quot;Detached&quot; のいずれか
+    &quot;vcenter&quot;: vCenter名
+    &quot;running_tasks&quot;: 実行中のタスクのリスト
+  }
+]
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="vcpsdk.plugins.mdx_ext.MdxResourceExt.login">
+<code class="descname">login</code><span class="sig-paren">(</span><em>auth_info</em><span class="sig-paren">)</span><a class="headerlink" href="#vcpsdk.plugins.mdx_ext.MdxResourceExt.login" title="Permalink to this definition">¶</a></dt>
+<dd><p>mdx REST API 認証トークンを発行する（開発用）
+通常利用時は mdx ユーザポータルから認証トークンを取得し、__init__ の init_token 引数に指定すること。</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>auth_info</strong> -- 以下のような、mdx REST APIの認証情報</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-json"><div class="highlight"><pre><span></span>{
+   &quot;username&quot;: mdx REST API ユーザ名
+   &quot;password&quot;: mdx REST API パスワード
+}
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="vcpsdk.plugins.mdx_ext.MdxResourceExt.power_off_vm">
+<code class="descname">power_off_vm</code><span class="sig-paren">(</span><em>vm_name</em>, <em>wait_for=True</em><span class="sig-paren">)</span><a class="headerlink" href="#vcpsdk.plugins.mdx_ext.MdxResourceExt.power_off_vm" title="Permalink to this definition">¶</a></dt>
+<dd><p>仮想マシンの強制停止 (PowerOFF) を実行する。</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>vm_name</strong> -- 仮想マシン名</li>
+<li><strong>wait_for</strong> -- 強制停止の完了を待つ場合 <code class="docutils literal"><span class="pre">True</span></code> を指定</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="vcpsdk.plugins.mdx_ext.MdxResourceExt.power_on_vm">
+<code class="descname">power_on_vm</code><span class="sig-paren">(</span><em>vm_name</em>, <em>wait_for=True</em><span class="sig-paren">)</span><a class="headerlink" href="#vcpsdk.plugins.mdx_ext.MdxResourceExt.power_on_vm" title="Permalink to this definition">¶</a></dt>
+<dd><p>仮想マシンの起動 (PowerON) を実行する。</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>vm_name</strong> -- 仮想マシン名</li>
+<li><strong>wait_for</strong> -- 起動の完了を待つ場合 <code class="docutils literal"><span class="pre">True</span></code> を指定</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="vcpsdk.plugins.mdx_ext.MdxResourceExt.power_shutdown_vm">
+<code class="descname">power_shutdown_vm</code><span class="sig-paren">(</span><em>vm_name</em>, <em>wait_for=True</em><span class="sig-paren">)</span><a class="headerlink" href="#vcpsdk.plugins.mdx_ext.MdxResourceExt.power_shutdown_vm" title="Permalink to this definition">¶</a></dt>
+<dd><p>仮想マシンのゲストOSのシャットダウンを実行する。</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>vm_name</strong> -- 仮想マシン名</li>
+<li><strong>wait_for</strong> -- シャットダウンの完了を待つ場合 <code class="docutils literal"><span class="pre">True</span></code> を指定</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="vcpsdk.plugins.mdx_ext.MdxResourceExt.project_history_iter">
+<code class="descname">project_history_iter</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#vcpsdk.plugins.mdx_ext.MdxResourceExt.project_history_iter" title="Permalink to this definition">¶</a></dt>
+<dd><p>プロジェクト操作履歴をイテレータとして返す。</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="vcpsdk.plugins.mdx_ext.MdxResourceExt.reboot_vm">
+<code class="descname">reboot_vm</code><span class="sig-paren">(</span><em>vm_name</em>, <em>wait_for=True</em><span class="sig-paren">)</span><a class="headerlink" href="#vcpsdk.plugins.mdx_ext.MdxResourceExt.reboot_vm" title="Permalink to this definition">¶</a></dt>
+<dd><p>仮想マシンの再起動を実行する。</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>vm_name</strong> -- 仮想マシン名</li>
+<li><strong>wait_for</strong> -- 再起動の完了を待つ場合 <code class="docutils literal"><span class="pre">True</span></code> を指定</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="vcpsdk.plugins.mdx_ext.MdxResourceExt.refresh_token">
+<code class="descname">refresh_token</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#vcpsdk.plugins.mdx_ext.MdxResourceExt.refresh_token" title="Permalink to this definition">¶</a></dt>
+<dd><p>mdx REST API 認証トークンを更新する</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="vcpsdk.plugins.mdx_ext.MdxResourceExt.set_current_project_by_name">
+<code class="descname">set_current_project_by_name</code><span class="sig-paren">(</span><em>project_name</em><span class="sig-paren">)</span><a class="headerlink" href="#vcpsdk.plugins.mdx_ext.MdxResourceExt.set_current_project_by_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>操作対象のmdxのプロジェクトをプロジェクト名で設定する</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="vcpsdk.plugins.mdx_ext.MdxResourceExt.set_current_project_id">
+<code class="descname">set_current_project_id</code><span class="sig-paren">(</span><em>project_id</em><span class="sig-paren">)</span><a class="headerlink" href="#vcpsdk.plugins.mdx_ext.MdxResourceExt.set_current_project_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>操作対象のmdxのプロジェクトIDを設定する</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="vcpsdk.plugins.mdx_ext.MdxResourceExt.vm_info_iter">
+<code class="descname">vm_info_iter</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#vcpsdk.plugins.mdx_ext.MdxResourceExt.vm_info_iter" title="Permalink to this definition">¶</a></dt>
+<dd><p>仮想マシン一覧をイテレータとして返す。</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, NII.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
