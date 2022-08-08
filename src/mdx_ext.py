@@ -7,7 +7,7 @@ import logging
 import re
 import sys
 import time
-from mdx_lib import MdxLib, VCPMdxException, DEFAULT_MDX_ENDPOINT
+from mdx_lib import MdxLib, MdxRestException, DEFAULT_MDX_ENDPOINT
 SLEEP_TIME_SEC = 5
 SLEEP_COUNT = 120
 DEPLOY_VM_SLEEP_COUNT = 240
@@ -89,7 +89,7 @@ class MdxResourceExt(object):
 
     def _check_project_id(self):
         if self._project_id is None:
-            raise VCPMdxException("call set_project_id to set target mdx project")
+            raise MdxRestException("call set_project_id to set target mdx project")
 
     def login(self, auth_info):
         """
@@ -180,7 +180,7 @@ class MdxResourceExt(object):
                     break
                 time.sleep(SLEEP_TIME_SEC)
             else:
-                raise VCPMdxException("{}: timeout: allocate ip address".format(vm_name))
+                raise MdxRestException("{}: timeout: allocate ip address".format(vm_name))
 
         return self._mdxlib.get_vm_info(vm_id)
 
@@ -197,7 +197,7 @@ class MdxResourceExt(object):
 
         vm_info = self._get_vm_info_by_id(vm_id)
         if vm_info["status"] != "PowerOFF":
-            raise VCPMdxException("mdxext: destroy_vm vm status is not PowerOFF but {}, please power_off first".format(vm_info["status"]))
+            raise MdxRestException("mdxext: destroy_vm vm status is not PowerOFF but {}, please power_off first".format(vm_info["status"]))
 
         # TODO: 仮想マシンの事前状態のチェックがmdx rest api側にない?
         self._mdxlib.destroy_vm(vm_id)
@@ -211,7 +211,7 @@ class MdxResourceExt(object):
                 # 削除完了
                 break
         else:
-            raise VCPMdxException("destroy_vm is failed: {}".format(vm_name))
+            raise MdxRestException("destroy_vm is failed: {}".format(vm_name))
 
     def power_on_vm(self, vm_name, wait_for=True):
         """
@@ -228,7 +228,7 @@ class MdxResourceExt(object):
             logger.debug("vm is already power on")
             return
         if vm_info["status"] != "PowerOFF":
-            raise VCPMdxException("mdxext: power_off_vm vm status is not PowerOFF but {}".format(vm_info["status"]))
+            raise MdxRestException("mdxext: power_off_vm vm status is not PowerOFF but {}".format(vm_info["status"]))
         self._mdxlib.power_on_vm(vm_id)
         if wait_for:
             self._wait_until(vm_id, "PowerON")
@@ -248,7 +248,7 @@ class MdxResourceExt(object):
             logger.debug("vm is already power off")
             return
         if vm_info["status"] != "PowerON":
-            raise VCPMdxException("mdxext: power_off_vm vm status is not PowerON but {}".format(vm_info["status"]))
+            raise MdxRestException("mdxext: power_off_vm vm status is not PowerON but {}".format(vm_info["status"]))
 
         self._mdxlib.power_off_vm(vm_id)
         if wait_for:
@@ -270,7 +270,7 @@ class MdxResourceExt(object):
             logger.debug("vm is already power off")
             return
         if vm_info["status"] != "PowerON":
-            raise VCPMdxException("mdxext: power_shutdown_vm vm status is not PowerON but {}".format(vm_info["status"]))
+            raise MdxRestException("mdxext: power_shutdown_vm vm status is not PowerON but {}".format(vm_info["status"]))
         # TODO: 操作履歴IDを返す?
         self._mdxlib.power_off_vm(vm_id)
 
@@ -291,7 +291,7 @@ class MdxResourceExt(object):
         vm_info = self._get_vm_info_by_id(vm_id)
         # 事前条件　PowerOn
         if vm_info["status"] != "PowerON":
-            raise VCPMdxException("mdxext: reboot_vm vm status is not PowerON but {}".format(vm_info["status"]))
+            raise MdxRestException("mdxext: reboot_vm vm status is not PowerON but {}".format(vm_info["status"]))
         self._mdxlib.reboot_vm(vm_id)
 
         if wait_for:
@@ -454,7 +454,7 @@ class MdxResourceExt(object):
                     return
         else:
             # 見つからない場合
-            raise VCPMdxException("mdx_ext: project {} is not found".format(project_name))
+            raise MdxRestException("mdx_ext: project {} is not found".format(project_name))
 
     def get_current_project(self):
         """
@@ -733,7 +733,7 @@ class MdxResourceExt(object):
             if vm_info["status"] == status:
                 break
         else:
-            raise VCPMdxException("wait_until {} is failed".format(status))
+            raise MdxRestException("wait_until {} is failed".format(status))
         logger.debug("wait_until finished")
 
 
