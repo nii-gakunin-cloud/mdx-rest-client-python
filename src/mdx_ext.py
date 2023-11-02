@@ -67,6 +67,9 @@ MDX_VM_SPEC_SCHEMA = {
                 "pvrdma",
                 "portgroup",
             ],
+        },
+        "service_level": {
+            "type": "string"
         }
     }
 }
@@ -159,8 +162,8 @@ class MdxResourceExt(object):
         vm_spec["vm_name"] = vm_name
 
         self._mdxlib.deploy_vm(vm_spec)
+        vm_id = self._find_vm(vm_name)
         if wait_for:
-            vm_id = self._find_vm(vm_name)
             # historyで待つ
             # for _i in range(0, SLEEP_COUNT):
             #     # vm_info = self._mdxlib.get_vm_info(vm_id)
@@ -311,6 +314,7 @@ class MdxResourceExt(object):
 
           {
             "name": 仮想マシン名
+            "vm_id": 仮想マシンID
             "os_type": OSタイプ
             "status": 仮想マシンの状態 "PowerON" "PowerOFF" "Suspended" "NotFound" "Deploying" "Detached" のいずれか
             "vmware_tools": [
