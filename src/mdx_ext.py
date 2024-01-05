@@ -690,13 +690,32 @@ class MdxResourceExt(object):
 
           {
             "pool_address": 転送元グローバルIPv4アドレス。プロジェクトの未使用グローバルIPアドレスを指定する。
-            "segument": ネットワークセグメントID
+            "segment": ネットワークセグメントID
             "dst_address": 転送先プライベートIPアドレス。セグメントIPアドレス範囲内のIPアドレスを指定する。
           }
 
         """
         # TODO: validate
-        return self._mdxlib.add_dnat(dnat_spec)
+        return self._mdxlib.add_dnat(self._project_id, dnat_spec)
+
+    def edit_dnat(self, dnat_id, dnat_spec):
+        """
+        指定したDNAT情報を更新する
+
+        :param dnat_id: DNAT ID
+        :param dnat_spec: 以下のような DNAT 設定情報
+
+        .. code-block:: json
+
+          {
+            "pool_address": 転送元グローバルIPv4アドレス。プロジェクトの未使用グローバルIPアドレスを指定する。
+            "segment": ネットワークセグメントID
+            "dst_address": 転送先プライベートIPアドレス。セグメントIPアドレス範囲内のIPアドレスを指定する。
+          }
+
+        """
+        # TODO: validate
+        return self._mdxlib.edit_dnat(self._project_id, dnat_id, dnat_spec)
 
     def delete_dnat(self, dnat_id):
         """

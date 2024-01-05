@@ -47,8 +47,6 @@ class MdxLib(object):
                 res = requests.post(url, data=json.dumps(data), headers=headers)
             elif method == "PUT":
                 res = requests.put(url, data, headers=headers)
-            elif method == "PUT":
-                res = requests.put(url, data, headers=headers)
             elif method == "DELETE":
                 res = requests.delete(url, headers=headers)
             return res
@@ -377,23 +375,34 @@ class MdxLib(object):
         return res.json()
 
     # dnat
-    def get_dnat(self, project_id, segment_id, page=1, page_size=10):
+    def get_dnat(self, project_id, page=1, page_size=10):
         res = self._call_api("/api/dnat/project/{}".format(project_id), method="GET")
         if res.status_code != 200:
             raise MdxRestException(
-                "proj-{}:segment-{}|mdxlib: get_dnat is failed: {}".format(
-                    project_id, segment_id, res.text
+                "proj-{}|mdxlib: get_dnat is failed: {}".format(
+                    project_id, res.text
                 ),
                 status_code=res.status_code,
             )
         return res.json()
 
     def add_dnat(self, project_id, nat_spec):
-        res = self._call_api("/api/dnat/", data=nat_spec, method="PUT")
+        res = self._call_api("/api/dnat/", data=nat_spec, method="POST")
         if res.status_code != 200:
             raise MdxRestException(
                 "proj-{}:segment-{}|mdxlib: add_dnat is failed: {}".format(
-                    project_id, nat_spec["segment_id"], res.text
+                    project_id, nat_spec["segment"], res.text
+                ),
+                status_code=res.status_code,
+            )
+        return res.json()
+
+    def edit_dnat(self, project_id, dnat_id, nat_spec):
+        res = self._call_api("/api/dnat/{}/".format(dnat_id), data=json.dumps(nat_spec), method="PUT")
+        if res.status_code != 200:
+            raise MdxRestException(
+                "proj-{}:segment-{}|mdxlib: edit_dnat is failed: {}".format(
+                    project_id, nat_spec["segment"], res.text
                 ),
                 status_code=res.status_code,
             )
