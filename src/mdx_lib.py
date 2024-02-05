@@ -375,8 +375,8 @@ class MdxLib(object):
         return res.json()
 
     # dnat
-    def get_dnat(self, project_id, page=1, page_size=10):
-        res = self._call_api("/api/dnat/project/{}".format(project_id), method="GET")
+    def get_dnat(self, project_id):
+        res = self._call_api("/api/dnat/project/{}/?page=1&page_size=100".format(project_id), method="GET")
         if res.status_code != 200:
             raise MdxRestException(
                 "proj-{}|mdxlib: get_dnat is failed: {}".format(
