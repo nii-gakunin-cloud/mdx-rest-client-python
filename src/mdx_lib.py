@@ -392,7 +392,7 @@ class MdxLib(object):
 
     def add_dnat(self, project_id, nat_spec):
         res = self._call_api("/api/dnat/", data=nat_spec, method="POST")
-        if res.status_code != 200:
+        if res.status_code != 201:
             raise MdxRestException(
                 "proj-{}:segment-{}|mdxlib: add_dnat is failed: {}".format(
                     project_id, nat_spec["segment"], res.text
