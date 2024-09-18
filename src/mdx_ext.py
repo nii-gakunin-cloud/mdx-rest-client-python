@@ -11,7 +11,7 @@ from mdx_lib import MdxLib, MdxRestException, DEFAULT_MDX_ENDPOINT
 SLEEP_TIME_SEC = 5
 SLEEP_COUNT = 120
 DEPLOY_VM_SLEEP_COUNT = 240
-
+DELETABLE_STATE = ["PowerOFF", "Deallocated"]
 
 logger = logging.getLogger(__name__)
 # project_id, vm_name, os_typeを外した
@@ -199,8 +199,9 @@ class MdxResourceExt(object):
         vm_id = self._find_vm(vm_name)
 
         vm_info = self._get_vm_info_by_id(vm_id)
-        if vm_info["status"] != "PowerOFF":
-            raise MdxRestException("mdxext: destroy_vm vm status is not PowerOFF but {}, please power_off first".format(vm_info["status"]))
+        if vm_info["status"] not in DELETABLE_STATE:
+            raise MdxRestException(
+                "mdxext: destroy_vm vm status is not PowerOFF or Deallocated but {}, please power_off first".format(vm_info["status"]))
 
         # TODO: 仮想マシンの事前状態のチェックがmdx rest api側にない?
         self._mdxlib.destroy_vm(vm_id)
@@ -216,7 +217,7 @@ class MdxResourceExt(object):
         else:
             raise MdxRestException("destroy_vm is failed: {}".format(vm_name))
 
-    def power_on_vm(self, vm_name, wait_for=True):
+    def power_on_vm(self, vm_name, service_level="spot", wait_for=True):
         """
         仮想マシンの起動 (PowerON) を実行する。
 
@@ -230,9 +231,11 @@ class MdxResourceExt(object):
         if vm_info["status"] == "PowerON":
             logger.debug("vm is already power on")
             return
-        if vm_info["status"] != "PowerOFF":
-            raise MdxRestException("mdxext: power_off_vm vm status is not PowerOFF but {}".format(vm_info["status"]))
-        self._mdxlib.power_on_vm(vm_id)
+        if vm_info["status"] not in DELETABLE_STATE:
+            raise MdxRestException(
+                "mdxext: power_off_vm vm status is not PowerOFF or deallocated but {}".format(
+                    vm_info["status"]))
+        self._mdxlib.power_on_vm(vm_id, service_level)
         if wait_for:
             self._wait_until(vm_id, "PowerON")
 
@@ -247,8 +250,8 @@ class MdxResourceExt(object):
         vm_id = self._find_vm(vm_name)
 
         vm_info = self._get_vm_info_by_id(vm_id)
-        if vm_info["status"] == "PowerOFF":
-            logger.debug("vm is already power off")
+        if vm_info["status"] in DELETABLE_STATE:
+            logger.debug("vm is already power off or deallocated")
             return
         if vm_info["status"] != "PowerON":
             raise MdxRestException("mdxext: power_off_vm vm status is not PowerON but {}".format(vm_info["status"]))
@@ -269,13 +272,13 @@ class MdxResourceExt(object):
 
         vm_info = self._get_vm_info_by_id(vm_id)
         # 事前条件　PowerOn
-        if vm_info["status"] == "PowerOFF":
-            logger.debug("vm is already power off")
+        if vm_info["status"] in DELETABLE_STATE:
+            logger.debug("vm is already power off or deallocated")
             return
         if vm_info["status"] != "PowerON":
             raise MdxRestException("mdxext: power_shutdown_vm vm status is not PowerON but {}".format(vm_info["status"]))
         # TODO: 操作履歴IDを返す?
-        self._mdxlib.power_off_vm(vm_id)
+        self._mdxlib.shutdown_vm(vm_id)
 
         if wait_for:
             self._wait_until(vm_id, "PowerOFF")
@@ -316,7 +319,7 @@ class MdxResourceExt(object):
             "name": 仮想マシン名
             "vm_id": 仮想マシンID
             "os_type": OSタイプ
-            "status": 仮想マシンの状態 "PowerON" "PowerOFF" "Suspended" "NotFound" "Deploying" "Detached" のいずれか
+            "status": 仮想マシンの状態 "PowerON" "PowerOFF" "Deallocated" "Suspended" "NotFound" "Deploying" "Detached" のいずれか
             "vmware_tools": [
                {
                  "status": VMware Tools状態
@@ -376,7 +379,7 @@ class MdxResourceExt(object):
             {
               "uuid": 仮想マシンID
               "name": 仮想マシン名
-              "status": 仮想マシン状態 "PowerON" "PowerOFF" "Suspended" "NotFound" "Deploying" "Detached" のいずれか
+              "status": 仮想マシン状態 "PowerON" "PowerOFF" "Deallocated" "Suspended" "NotFound" "Deploying" "Detached" のいずれか
               "vcenter": vCenter名
               "running_tasks": 実行中のタスクのリスト
             }
@@ -583,7 +586,9 @@ class MdxResourceExt(object):
         page_size = 100
         # ページ番号で制御する(URLではなく)
         while True:
-            vm_list = self._mdxlib.get_vm_list(self._project_id, page=current_page, page_size=page_size)
+            vm_list = self._mdxlib.get_vm_list(self._project_id,
+                                               page=current_page,
+                                               page_size=page_size)
             for vm_info in vm_list["results"]:
                 yield vm_info
             # VM情報のロックが必要? (ページをめくる間にVMが増減したらどうするか?)
@@ -598,15 +603,21 @@ class MdxResourceExt(object):
         """
         self._check_project_id()
         current_page = 1
-        page_size = 100
+        page_size = 10000
         while True:
-            history_list = self._mdxlib.get_project_history(self._project_id, page=current_page, page_size=page_size)
+            history_list = self._mdxlib.get_project_history(self._project_id,
+                                                            page=current_page,
+                                                            page_size=page_size)
             for history in history_list["results"]:
                 yield history
 
             if history_list["next"] is None:
                 return
             current_page += 1
+
+    def get_assignable_global_ipv4(self):
+        self._check_project_id()
+        return self._mdxlib.get_assignable_global_ipv4(self._project_id)
 
     def dnat_iter(self):
         self._check_project_id()
@@ -723,7 +734,7 @@ class MdxResourceExt(object):
 
         :param dnat_id: DNAT ID
         """
-        self._mdxlib.delete_dnat(dnat_id)
+        self._mdxlib.delete_dnat(self._project_id, dnat_id)
         # 返り値なし
 
     def _get_vm_id_by_vm_name(self, vm_name):
@@ -751,7 +762,8 @@ class MdxResourceExt(object):
         for _i in range(0, SLEEP_COUNT):
             time.sleep(SLEEP_TIME_SEC)
             vm_info = self._mdxlib.get_vm_info(vm_id)
-            logger.debug("waiting expected: {} actual: {}".format(status, vm_info["status"]))
+            logger.debug("waiting expected: {} actual: {}".format(
+                status, vm_info["status"]))
 
             if vm_info["status"] == status:
                 break

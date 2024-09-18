@@ -192,11 +192,12 @@ class MdxLib(object):
             )
         return res.json()
 
-    def power_on_vm(self, vm_id):
+    def power_on_vm(self, vm_id, service_level="spot"):
         """
         仮想マシンの起動 (電源オン) (非同期)
         """
-        res = self._call_api("/api/vm/{}/power_on/".format(vm_id), method="POST")
+        data = {'service_level': service_level}
+        res = self._call_api("/api/vm/{}/power_on/".format(vm_id), method="POST", data=data)
         if res.status_code != 202:
             raise MdxRestException(
                 "mdxlib: power_on vm is failed: {}".format(res.text),
@@ -226,7 +227,7 @@ class MdxLib(object):
             )
         return res.json()
 
-    def get_project_history(self, project_id, page=1, page_size=10):
+    def get_project_history(self, project_id, page=1, page_size=10000):
         data = dict(
             page=page,
             page_size=page_size,
@@ -241,7 +242,7 @@ class MdxLib(object):
             )
         return res.json()
 
-    def get_vm_list(self, project_id, page=1, page_size=10):
+    def get_vm_list(self, project_id, page=1, page_size=10000):
         data = dict(
             page=page,
             page_size=page_size,
@@ -308,7 +309,7 @@ class MdxLib(object):
 
     def get_vm_catalogs(self, project_id):
         res = self._call_api(
-            "/api/catalog/project/{}/?page=1&page_size=50".format(project_id),
+            "/api/catalog/project/{}/?page=1&page_size=10000".format(project_id),
             method="GET",
         )
         if res.status_code != 200:
@@ -321,7 +322,7 @@ class MdxLib(object):
         return res.json()
 
     def get_allow_acl_ipv4_info(self, segment_id):
-        res = self._call_api("/api/acl/segment/{}/".format(segment_id), method="GET")
+        res = self._call_api("/api/acl/segment/{}/?page=1&page_size=10000".format(segment_id), method="GET")
         if res.status_code != 200:
             raise MdxRestException(
                 "mdxlib: get_allow_acl_ipv4_info is failed: {} {}".format(
@@ -375,7 +376,7 @@ class MdxLib(object):
         return res.json()
 
     # dnat
-    def get_dnat(self, project_id, page=1, page_size=10):
+    def get_dnat(self, project_id, page=1, page_size=10000):
         data = dict(
             page=page,
             page_size=page_size,
@@ -419,6 +420,19 @@ class MdxLib(object):
                 "proj-{}:dnat-{}|mdxlib: delete_dnat is failed: {}".format(
                     project_id, dnat_id, res.text
                 ),
+                status_code=res.status_code,
+            )
+        # 返り値(json)なし
+        return res
+
+    def get_assignable_global_ipv4(self, project_id):
+        res = self._call_api(
+            "/api/global_ip/project/{}/assignable/".format(project_id),
+            method="GET"
+        )
+        if res.status_code != 200:
+            raise MdxRestException(
+                "mdxlib: get project history is failed: {}".format(res.text),
                 status_code=res.status_code,
             )
         return res.json()
