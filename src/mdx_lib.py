@@ -257,10 +257,11 @@ class MdxLib(object):
             )
         return res.json()
 
-    def get_vm_history(self, vm_id):
+    def get_vm_history(self, vm_id, page=1, page_size=1000):
         # TODO: DeployingのVMに対してはvm_idがふられているが、historyが取れない?
-        """ """
-        res = self._call_api("/api/history/vm/{}/".format(vm_id), method="GET")
+        res = self._call_api(
+            "/api/history/vm/{}/?page={}&page_size={}".format(vm_id, page, page_size),
+            method="GET")
         if res.status_code != 200:
             raise MdxRestException(
                 "mdxlib: get vm history is failed: {} {}".format(vm_id, res.text),
@@ -342,6 +343,17 @@ class MdxLib(object):
             )
         return res.json()
 
+    def edit_allow_acl_ipv4_info(self, acl_ipv4_id, allow_acl_spec):
+        # TODO: validate allow_acl_spec with jsonschema
+        res = self._call_api("/api/acl/{}/".format(acl_ipv4_id),
+                             data=json.dumps(allow_acl_spec), method="PUT")
+        if res.status_code != 200:
+            raise MdxRestException(
+                "mdxlib: edit_allow_acl_ipv4_info is failed: {}".format(res.text),
+                status_code=res.status_code,
+            )
+        return res.json()
+
     def delete_allow_acl_ipv4_info(self, acl_ipv4_id):
         res = self._call_api("/api/acl/{}/".format(acl_ipv4_id), method="DELETE")
         if res.status_code != 204:
@@ -349,9 +361,50 @@ class MdxLib(object):
                 "mdxlib: delete_allow_acl_ipv4_info is failed: {}".format(res.text),
                 status_code=res.status_code,
             )
-        # 返り値(json)なし
+        # 返り値なし
 
-    # TODO: put (edit) allow acl...
+    def get_allow_acl_ipv6_info(self, segment_id):
+        res = self._call_api(
+            "/api/acl_v6/segment/{}/?page=1&page_size=10000".format(segment_id),
+            method="GET")
+        if res.status_code != 200:
+            raise MdxRestException(
+                "mdxlib: get_allow_acl_ipv6_info is failed: {} {}".format(
+                    segment_id, res.text
+                ),
+                status_code=res.status_code,
+            )
+        return res.json()
+
+    def add_allow_acl_ipv6_info(self, allow_acl_spec):
+        # TODO: validate allow_acl_spec with jsonschema
+        res = self._call_api("/api/acl_v6/", data=allow_acl_spec, method="POST")
+        if res.status_code != 201:
+            raise MdxRestException(
+                "mdxlib: add_allow_acl_ipv6_info is failed: {}".format(res.text),
+                status_code=res.status_code,
+            )
+        return res.json()
+
+    def edit_allow_acl_ipv6_info(self, acl_ipv6_id, allow_acl_spec):
+        # TODO: validate allow_acl_spec with jsonschema
+        res = self._call_api("/api/acl_v6/{}/".format(acl_ipv6_id),
+                             data=json.dumps(allow_acl_spec), method="PUT")
+        if res.status_code != 200:
+            raise MdxRestException(
+                "mdxlib: edit_allow_acl_ipv6_info is failed: {}".format(res.text),
+                status_code=res.status_code,
+            )
+        return res.json()
+
+    def delete_allow_acl_ipv6_info(self, acl_ipv6_id):
+        res = self._call_api("/api/acl_v6/{}/".format(acl_ipv6_id), method="DELETE")
+        if res.status_code != 204:
+            raise MdxRestException(
+                "mdxlib: delete_allow_acl_ipv6_info is failed: {}".format(res.text),
+                status_code=res.status_code,
+            )
+        # 返り値なし
 
     def get_segments(self, project_id):
         res = self._call_api(

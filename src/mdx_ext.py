@@ -416,6 +416,40 @@ class MdxResourceExt(object):
         self._check_project_id()
         return self._mdxlib.get_vm_catalogs(self._project_id)
 
+    def get_vm_history(self, vm_name):
+        """"91e7ac85-4c32-47ea-9776-81fd163ca78f"
+        仮想マシンの操作履歴情報を取得する
+
+        :param vm_name: 仮想マシン名
+
+        :returns: 以下のような、仮想マシン操作履歴情報
+
+        .. code-block:: json
+
+          [
+            {
+                "uuid": "操作ID",
+                "project": "プロジェクト名",
+                "user_name": "ユーザ名",
+                "type": "操作種別",
+                "object_uuid": "対象ID",
+                "object_name": "対象名",
+                "start_datetime": "開始日時",
+                "end_datetime": "終了日時",
+                "status": "ステータス",
+                "progress": 進捗,
+                "error_message": "エラーメッセージ",
+                "error_detail": "エラー詳細"
+            }
+          ]
+
+        """
+        self._check_project_id()
+        vm_id = self._get_vm_id_by_vm_name(vm_name)
+        if vm_id is None:
+            return None
+        return self._mdxlib.get_vm_history(vm_id)
+
     def get_assigned_projects(self):
         """
         ユーザに紐付いたプロジェクト情報を取得する
@@ -459,15 +493,14 @@ class MdxResourceExt(object):
                 if proj["name"] == project_name:
                     self._project_id = proj["uuid"]
                     return
-        else:
-            # 見つからない場合
-            raise MdxRestException("mdx_ext: project {} is not found".format(project_name))
+
+        raise MdxRestException(f"mdx_ext: project {project_name} is not found")
 
     def get_current_project(self):
         """
         操作対象のmdxのプロジェクトの取得
 
-        :returns: 以下のような、プロジェクトに属するAllow ACL IPv4の情報のリスト
+        :returns: 以下のような、プロジェクト情報
 
         .. code-block:: json
 
@@ -486,9 +519,7 @@ class MdxResourceExt(object):
             for proj in org["projects"]:
                 if proj["uuid"] == self._project_id:
                     return proj
-        else:
-            # 見つからない場合
-            return None
+        return None
 
     # network
     def get_allow_acl_ipv4_info(self, segment_id):
@@ -502,7 +533,7 @@ class MdxResourceExt(object):
 
           [
             {
-              "uuid": Allo ACL IPv4 ID
+              "uuid": Allow ACL IPv4 ID
               "src_address": Srcアドレス
               "src_mask":  Srcマスク (string で指定　例: "24")
               "src_port": Srcポート (string)
@@ -540,12 +571,114 @@ class MdxResourceExt(object):
         self._check_project_id()
         return self._mdxlib.add_allow_acl_ipv4_info(allow_acl_spec)
 
+    def edit_allow_acl_ipv4_info(self, allow_acl_id, allow_acl_spec):
+        """
+        指定したAllow ACL IPv4を編集する
+
+        :param allow_acl_spec: 以下のような、登録するAllow ACL IPv4の仕様
+
+        .. code-block:: json
+
+          {
+            "src_address": Src IPv4アドレス
+            "src_mask": Srcマスク
+            "src_port": Srcポート
+            "dst_address": Dst IPv4アドレス
+            "dst_mask": Dstマスクの文字列表現
+            "dst_port": Dstポートの文字列表現
+            "protocol": プロトコル "ICMP" "TCP" "UDP" のいずれか
+          }
+
+        """
+        self._check_project_id()
+        return self._mdxlib.edit_allow_acl_ipv4_info(allow_acl_id,
+                                                     allow_acl_spec)
+
     def delete_allow_acl_ipv4_info(self, acl_ipv4_id):
         """
         :param acl_ipv4_id: 削除対象の Allow ACL IPv4 ID
         """
         self._check_project_id()
         self._mdxlib.delete_allow_acl_ipv4_info(acl_ipv4_id)
+
+    def get_allow_acl_ipv6_info(self, segment_id):
+        """
+        Allow ACL IPv6情報の取得
+
+        :param segment_id: ネットワークセグメントID
+        :returns: 以下のような、プロジェクトに属するAllow ACL IPv6の情報のリスト
+
+        .. code-block:: json
+
+          [
+            {
+              "uuid": Allow ACL IPv6 ID
+              "src_address": Srcアドレス
+              "src_mask":  Srcマスク (string で指定 例: "24")
+              "src_port": Srcポート (string)
+              "dst_address": Dstアドレス
+              "dst_mask": Dstマスク(string で指定 例: "24")
+              "dst_port": Dstポート (string)
+              "protocol": プロトコル "ICMP" "TCP" "UDP" のいずれか
+            }
+          ]
+
+        """
+        self._check_project_id()
+        return self._mdxlib.get_allow_acl_ipv6_info(segment_id)
+
+    def add_allow_acl_ipv6_info(self, allow_acl_spec):
+        """
+        指定したセグメントにAllow ACL IPv6を追加する
+
+        :param allow_acl_spec: 以下のような、追加するAllow ACL IPv6の仕様
+
+        .. code-block:: json
+
+          {
+            "segment": ネットワークセグメントID
+            "src_address": Src IPv6アドレス
+            "src_mask": Srcマスク
+            "src_port": Srcポート
+            "dst_address": Dst IPv6アドレス
+            "dst_mask": Dstマスクの文字列表現
+            "dst_port": Dstポートの文字列表現
+            "protocol": プロトコル "ICMP" "TCP" "UDP" のいずれか
+          }
+
+        """
+        self._check_project_id()
+        return self._mdxlib.add_allow_acl_ipv6_info(allow_acl_spec)
+
+    def edit_allow_acl_ipv6_info(self, allow_acl_id, allow_acl_spec):
+        """
+        指定したAllow ACL IPv6を編集する
+
+        :param allow_acl_spec: 以下のような、登録するAllow ACL IPv6の仕様
+
+        .. code-block:: json
+
+          {
+            "src_address": Src IPv6アドレス
+            "src_mask": Srcマスク
+            "src_port": Srcポート
+            "dst_address": Dst IPv6アドレス
+            "dst_mask": Dstマスクの文字列表現
+            "dst_port": Dstポートの文字列表現
+            "protocol": プロトコル "ICMP" "TCP" "UDP" のいずれか
+          }
+
+        """
+        self._check_project_id()
+        return self._mdxlib.edit_allow_acl_ipv6_info(allow_acl_id,
+                                                     allow_acl_spec)
+
+    def delete_allow_acl_ipv6_info(self, acl_ipv6_id):
+        """
+        :param acl_ipv6_id: 削除対象の Allow ACL IPv6 ID
+        """
+        self._check_project_id()
+        self._mdxlib.delete_allow_acl_ipv6_info(acl_ipv6_id)
 
     # project
     def get_project_history(self):
