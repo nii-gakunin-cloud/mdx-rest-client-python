@@ -417,7 +417,7 @@ class MdxResourceExt(object):
         return self._mdxlib.get_vm_catalogs(self._project_id)
 
     def get_vm_history(self, vm_name):
-        """"91e7ac85-4c32-47ea-9776-81fd163ca78f"
+        """
         仮想マシンの操作履歴情報を取得する
 
         :param vm_name: 仮想マシン名
