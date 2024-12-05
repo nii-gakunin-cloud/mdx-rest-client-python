@@ -94,23 +94,6 @@ class MdxResourceExt(object):
         if self._project_id is None:
             raise MdxRestException("call set_project_id to set target mdx project")
 
-    def login(self, auth_info):
-        """
-        mdx REST API 認証トークンを発行する（開発用）
-        通常利用時は mdx ユーザポータルから認証トークンを取得し、__init__ の init_token 引数に指定すること。
-
-        :param auth_info: 以下のような、mdx REST APIの認証情報
-
-        .. code-block:: json
-
-          {
-             "username": mdx REST API ユーザ名
-             "password": mdx REST API パスワード
-          }
-
-        """
-        self._mdxlib.login(auth_info)
-
     def refresh_token(self):
         """
         mdx REST API 認証トークンを更新する
@@ -118,7 +101,7 @@ class MdxResourceExt(object):
         self._mdxlib.refresh_token()
 
     def deploy_vm(self, vm_name, vm_spec, wait_for=True):
-        """
+        '''
         仮想マシンのデプロイを実行する。wait_forが ``True`` の場合、仮想マシンにIPv4アドレスが付与されるまで待つ。
 
         :param vm_name: 仮想マシン名
@@ -127,25 +110,25 @@ class MdxResourceExt(object):
         .. code-block:: json
 
           {
-            "catalog": カタログID
-            "disk_size": 仮想ディスクサイズ(GB)
-            "gpu": GPU数(数値を文字列で指定)
-            "pack_type": パックタイプ(※通常プロジェクトの場合に指定) "gpu" または "cpu" を指定
-            "pack_num": パック数(※通常プロジェクトの場合に指定)
+            "catalog": "カタログID",
+            "disk_size": "仮想ディスクサイズ(GB)",
+            "gpu": "GPU数(数値を文字列で指定)",
+            "pack_type": "パックタイプ(※通常プロジェクトの場合に指定) gpu または cpu を指定",
+            "pack_num": "パック数(※通常プロジェクトの場合に指定)",
             "network_adapters": [
                {
-                  "adapter_number": ネットワーク番号
-                  "segment": ネットワークセグメントID
+                  "adapter_number": "ネットワーク番号"
+                  "segment": "ネットワークセグメントID"
                }
             ],
-            "shared_key": 仮想マシンへのSSH接続用公開鍵の文字列
-            "storage_network": ストレージネットワーク "sr-iov", "pvrdma", "portgroup" のいずれかを指定
-            "template_name": vCenter上の仮想マシンテンプレート名
+            "shared_key": "仮想マシンへのSSH接続用公開鍵の文字列",
+            "storage_network": "ストレージネットワーク",
+            "template_name": "vCenter上の仮想マシンテンプレート名",
           }
 
         :param wait_for: 仮想マシンにIPv4アドレスが付与されるまで待つ場合 ``True`` を指定
         :returns: 仮想マシン情報。詳細は get_vm_info() を参照のこと。
-        """
+        '''
         # 専有プロジェクトの場合
         # "cpu": CPU数(※専有プロジェクトの場合に必要)
         # "memory": メモリ量(GB) (※専有プロジェクトの場合に必要)
@@ -316,48 +299,48 @@ class MdxResourceExt(object):
         .. code-block:: json
 
           {
-            "name": 仮想マシン名
-            "vm_id": 仮想マシンID
-            "os_type": OSタイプ
-            "status": 仮想マシンの状態 "PowerON" "PowerOFF" "Deallocated" "Suspended" "NotFound" "Deploying" "Detached" のいずれか
+            "name": "仮想マシン名",
+            "vm_id": "仮想マシンID",
+            "os_type": "OSタイプ",
+            "status": "仮想マシンの状態",
             "vmware_tools": [
                {
-                 "status": VMware Tools状態
-                 "version": VMware Toolsバージョン
+                 "status": "VMware Tools状態",
+                 "version": "VMware Toolsバージョン"
                }
             ],
-            "cpu": CPU数
-            "memory": メモリ量の文字列表現 (例: "2 GB")
-            "gpu": GPU数の文字列表現 (例: "1")
+            "cpu": "CPU数",
+            "memory": "メモリ量の文字列表現",
+            "gpu": "GPU数の文字列表現",
             "service_networks": [
               {
-                "adapter_number": ネットワーク番号
-                "ipv4_address": IPv4アドレスのリスト
-                "ipv6_address": IPv6アドレスのリスト
-                "segment": ネットワークセグメント名
+                "adapter_number": "ネットワーク番号",
+                "ipv4_address": "IPv4アドレスのリスト",
+                "ipv6_address": "IPv6アドレスのリスト",
+                "segment": "ネットワークセグメント名"
               }
             ],
             "storage_networks": [
               {
-                "adapter_number": ネットワーク番号
-                "ipv4_address": IPv4アドレスのリスト
-                "ipv6_address": IPv6アドレスのリスト
-                "type": ネットワークタイプ "sr-iov", "pvrdma", "portgroup" のいずれか
+                "adapter_number": "ネットワーク番号",
+                "ipv4_address": "IPv4アドレスのリスト",
+                "ipv6_address": "IPv6アドレスのリスト",
+                "type": "ネットワークタイプ"
               }
             ],
             "hard_disks": [
               {
-                "disk_number": 仮想ディスク番号
-                "device_key": 仮想ディスクデバイスキー
-                "capacity": 仮想ディスクサイズ
-                "datastore": データストア名
+                "disk_number": "仮想ディスク番号",
+                "device_key": "仮想ディスクデバイスキー",
+                "capacity": "仮想ディスクサイズ",
+                "datastore": "データストア名"
               }
             ],
-            "dvd_media": ゲストOSがマウントしているISOイメージ
-            "vcenter": vCenter名
-            "esxi": ESXi名
-            "pack_type": パックタイプ "cpu", "gpu" のいずれか
-            "pack_num": パック数
+            "dvd_media": "ゲストOSがマウントしているISOイメージ",
+            "vcenter": "vCenter名",
+            "esxi": "ESXi名",
+            "pack_type": "パックタイプ",
+            "pack_num": "パック数"
           }
 
         """
@@ -377,11 +360,11 @@ class MdxResourceExt(object):
 
           [
             {
-              "uuid": 仮想マシンID
-              "name": 仮想マシン名
-              "status": 仮想マシン状態 "PowerON" "PowerOFF" "Deallocated" "Suspended" "NotFound" "Deploying" "Detached" のいずれか
-              "vcenter": vCenter名
-              "running_tasks": 実行中のタスクのリスト
+              "uuid": "仮想マシンID",
+              "name": "仮想マシン名",
+              "status": "仮想マシンのステータス",
+              "vcenter": "vCenter名",
+              "running_tasks": "実行中のタスクのリスト",
             }
           ]
 
@@ -399,16 +382,16 @@ class MdxResourceExt(object):
 
           [
             {
-              "uuid": カタログID
-              "name": カタログ名
-              "type": カタログのタイプ
-              "template_name": vCenter上の仮想マシンテンプレート名
-              "os_type": OS種別 "Linux", "Windows" のいずれか
-              "os_name": OS名 (例: "CentOS")
-              "os_version": OSバージョン
-              "hw_version": ハードウェアバージョン
-              "description": 説明
-              "login_username": OSログインユーザ名
+              "uuid": "カタログID",
+              "name": "カタログ名",
+              "type": "カタログのタイプ",
+              "template_name": "vCenter上の仮想マシンテンプレート名",
+              "os_type": "OS種別",
+              "os_name": "OS名",
+              "os_version": "OSバージョン",
+              "hw_version": "ハードウェアバージョン",
+              "description": "説明",
+              "login_username": "OSログインユーザ名"
             }
           ]
 
@@ -437,7 +420,7 @@ class MdxResourceExt(object):
                 "start_datetime": "開始日時",
                 "end_datetime": "終了日時",
                 "status": "ステータス",
-                "progress": 進捗,
+                "progress": "進捗",
                 "error_message": "エラーメッセージ",
                 "error_detail": "エラー詳細"
             }
@@ -460,14 +443,14 @@ class MdxResourceExt(object):
 
           [
             {
-              "uuid": 機関ID
-              "name": 機関名
+              "uuid": "機関ID",
+              "name": "機関名",
               "projects": [
                  {
-                    "uuid": プロジェクトID
-                    "name": プロジェクト名
-                    "type": プロジェクトのタイプ "専有" "通常" のいずれか
-                    "expired": プロジェクトの期限が切れたか否か (boolean)
+                    "uuid": "プロジェクトID",
+                    "name": "プロジェクト名",
+                    "type": "プロジェクトのタイプ",
+                    "expired": "プロジェクトの期限が切れたか否か (boolean)"
                  }
               ]
             }
@@ -505,10 +488,10 @@ class MdxResourceExt(object):
         .. code-block:: json
 
           {
-             "uuid": プロジェクトID
-             "name": プロジェクト名
-             "type": プロジェクトのタイプ "専有" "通常" のいずれか
-             "expired": プロジェクトの期限が切れたか否か (boolean)
+             "uuid": "プロジェクトID",
+             "name": "プロジェクト名",
+             "type": "プロジェクトのタイプ",
+             "expired": "プロジェクトの期限が切れたか否か"
           }
 
         """
@@ -533,14 +516,14 @@ class MdxResourceExt(object):
 
           [
             {
-              "uuid": Allow ACL IPv4 ID
-              "src_address": Srcアドレス
-              "src_mask":  Srcマスク (string で指定　例: "24")
-              "src_port": Srcポート (string)
-              "dst_address": Dstアドレス
-              "dst_mask": Dstマスク(string で指定　例: "24")
-              "dst_port": Dstポート (string)
-              "protocol": プロトコル "ICMP" "TCP" "UDP" のいずれか
+              "uuid": "Allow ACL IPv4 ID",
+              "src_address": "Srcアドレス",
+              "src_mask":  "Srcマスク",
+              "src_port": "Srcポート",
+              "dst_address": "Dstアドレス",
+              "dst_mask": "Dstマスク",
+              "dst_port": "Dstポート",
+              "protocol": "プロトコル"
             }
           ]
 
@@ -557,14 +540,14 @@ class MdxResourceExt(object):
         .. code-block:: json
 
           {
-            "segment": ネットワークセグメントID
-            "src_address": Src IPv4アドレス
-            "src_mask": Srcマスク
-            "src_port": Srcポート
-            "dst_address": Dst IPv4アドレス
-            "dst_mask": Dstマスクの文字列表現
-            "dst_port": Dstポートの文字列表現
-            "protocol": プロトコル "ICMP" "TCP" "UDP" のいずれか
+            "segment": "ネットワークセグメントID",
+            "src_address": "Src IPv4アドレス",
+            "src_mask": "Srcマスク",
+            "src_port": "Srcポート",
+            "dst_address": "Dst IPv4アドレス",
+            "dst_mask": "Dstマスクの文字列表現",
+            "dst_port": "Dstポートの文字列表現",
+            "protocol": "プロトコル"
           }
 
         """
@@ -580,13 +563,13 @@ class MdxResourceExt(object):
         .. code-block:: json
 
           {
-            "src_address": Src IPv4アドレス
-            "src_mask": Srcマスク
-            "src_port": Srcポート
-            "dst_address": Dst IPv4アドレス
-            "dst_mask": Dstマスクの文字列表現
-            "dst_port": Dstポートの文字列表現
-            "protocol": プロトコル "ICMP" "TCP" "UDP" のいずれか
+            "src_address": "Src IPv4アドレス",
+            "src_mask": "Srcマスク",
+            "src_port": "Srcポート",
+            "dst_address": "Dst IPv4アドレス",
+            "dst_mask": "Dstマスクの文字列表現",
+            "dst_port": "Dstポートの文字列表現",
+            "protocol": "プロトコル"
           }
 
         """
@@ -612,14 +595,14 @@ class MdxResourceExt(object):
 
           [
             {
-              "uuid": Allow ACL IPv6 ID
-              "src_address": Srcアドレス
-              "src_mask":  Srcマスク (string で指定 例: "24")
-              "src_port": Srcポート (string)
-              "dst_address": Dstアドレス
-              "dst_mask": Dstマスク(string で指定 例: "24")
-              "dst_port": Dstポート (string)
-              "protocol": プロトコル "ICMP" "TCP" "UDP" のいずれか
+              "uuid": "Allow ACL IPv6 ID",
+              "src_address": "Srcアドレス",
+              "src_mask":  "Srcマスク",
+              "src_port": "Srcポート",
+              "dst_address": "Dstアドレス",
+              "dst_mask": "Dstマスク",
+              "dst_port": "Dstポート",
+              "protocol": "プロトコル"
             }
           ]
 
@@ -636,14 +619,14 @@ class MdxResourceExt(object):
         .. code-block:: json
 
           {
-            "segment": ネットワークセグメントID
-            "src_address": Src IPv6アドレス
-            "src_mask": Srcマスク
-            "src_port": Srcポート
-            "dst_address": Dst IPv6アドレス
-            "dst_mask": Dstマスクの文字列表現
-            "dst_port": Dstポートの文字列表現
-            "protocol": プロトコル "ICMP" "TCP" "UDP" のいずれか
+            "segment": "ネットワークセグメントID",
+            "src_address": "Src IPv6アドレス",
+            "src_mask": "Srcマスク",
+            "src_port": "Srcポート",
+            "dst_address": "Dst IPv6アドレス",
+            "dst_mask": "Dstマスクの文字列表現",
+            "dst_port": "Dstポートの文字列表現",
+            "protocol": "プロトコル"
           }
 
         """
@@ -659,13 +642,13 @@ class MdxResourceExt(object):
         .. code-block:: json
 
           {
-            "src_address": Src IPv6アドレス
-            "src_mask": Srcマスク
-            "src_port": Srcポート
-            "dst_address": Dst IPv6アドレス
-            "dst_mask": Dstマスクの文字列表現
-            "dst_port": Dstポートの文字列表現
-            "protocol": プロトコル "ICMP" "TCP" "UDP" のいずれか
+            "src_address": "Src IPv6アドレス",
+            "src_mask": "Srcマスク",
+            "src_port": "Srcポート",
+            "dst_address": "Dst IPv6アドレス",
+            "dst_mask": "Dstマスクの文字列表現",
+            "dst_port": "Dstポートの文字列表現",
+            "protocol": "プロトコル"
           }
 
         """
@@ -691,18 +674,18 @@ class MdxResourceExt(object):
 
           [
             {
-              "uuid": 操作履歴ID
-              "project": プロジェクトID
-              "user_name": 操作ユーザ名
-              "type": 操作種別
-              "object_uuid": 操作対象オブジェクトID
-              "object_name": 操作対象オブジェクト名
-              "start_datetime": 開始日付 (YYYY-mm-dd HH:MM:SS)
-              "end_datetime": 終了日付 (YYYY-mm-dd HH:MM:SS)
-              "status": ステータス "Running" "Completed" "Failed" のいずれか
-              "progress": 進捗率 (%)
-              "error_message": エラーメッセージ
-              "error_detail": エラー詳細
+              "uuid": "操作履歴ID",
+              "project": "プロジェクトID",
+              "user_name": "操作ユーザ名",
+              "type": "操作種別",
+              "object_uuid": "操作対象オブジェクトID",
+              "object_name": "操作対象オブジェクト名",
+              "start_datetime": "開始日付 (YYYY-mm-dd HH:MM:SS)",
+              "end_datetime": "終了日付 (YYYY-mm-dd HH:MM:SS)",
+              "status": "ステータス",
+              "progress": "進捗率",
+              "error_message": "エラーメッセージ",
+              "error_detail": "エラー詳細"
             }
           ]
         """
@@ -775,9 +758,9 @@ class MdxResourceExt(object):
 
           [
             {
-              "uuid": ネットワークセグメントID
-              "name": ネットワークセグメント名
-              "default": プロジェクト作成時に作成されるデフォルトのネットワークセグメントか否か(boolean)
+              "uuid": "ネットワークセグメントID",
+              "name": "ネットワークセグメント名",
+              "default": "プロジェクト作成時に作成されるデフォルトのネットワークセグメントか否か"
             }
           ]
 
@@ -795,9 +778,9 @@ class MdxResourceExt(object):
         .. code-block:: json
 
           {
-            "vlan_id": VLAN ID
-            "vni": VNI
-            "ip_range": IPアドレス範囲
+            "vlan_id": "VLAN ID",
+            "vni": "VNI",
+            "ip_range": "IPアドレス範囲"
           }
 
         """
@@ -814,10 +797,10 @@ class MdxResourceExt(object):
 
           [
             {
-              "uuid": DNAT ID
-              "pool_address": 転送元グローバルIPv4アドレス
-              "segument": セグメント名
-              "dst_address": 転送先プライベートIPアドレス
+              "uuid": "DNAT ID",
+              "pool_address": "転送元グローバルIPv4アドレス",
+              "segument": "セグメント名",
+              "dst_address": "転送先プライベートIPアドレス"
             }
           ]
 
@@ -833,9 +816,9 @@ class MdxResourceExt(object):
         .. code-block:: json
 
           {
-            "pool_address": 転送元グローバルIPv4アドレス。プロジェクトの未使用グローバルIPアドレスを指定する。
-            "segment": ネットワークセグメントID
-            "dst_address": 転送先プライベートIPアドレス。セグメントIPアドレス範囲内のIPアドレスを指定する。
+            "pool_address": "転送元グローバルIPv4アドレス。プロジェクトの未使用グローバルIPアドレスを指定する。",
+            "segment": "ネットワークセグメントID",
+            "dst_address": "転送先プライベートIPアドレス。セグメントIPアドレス範囲内のIPアドレスを指定する。"
           }
 
         """
@@ -852,9 +835,9 @@ class MdxResourceExt(object):
         .. code-block:: json
 
           {
-            "pool_address": 転送元グローバルIPv4アドレス。プロジェクトの未使用グローバルIPアドレスを指定する。
-            "segment": ネットワークセグメントID
-            "dst_address": 転送先プライベートIPアドレス。セグメントIPアドレス範囲内のIPアドレスを指定する。
+            "pool_address": "転送元グローバルIPv4アドレス。プロジェクトの未使用グローバルIPアドレスを指定する。",
+            "segment": "ネットワークセグメントID",
+            "dst_address": "転送先プライベートIPアドレス。セグメントIPアドレス範囲内のIPアドレスを指定する。"
           }
 
         """
@@ -919,7 +902,7 @@ def use_ipv4_only():
 
 
 # 簡易テスト
-def test(auth_info):
+def test(token):
     # 仮想マシンの仕様
     pack_num = 4
     pack_type = "cpu"
@@ -932,7 +915,6 @@ def test(auth_info):
 
     vm_name = "python_test"
     ssh_shared_key_path = "/home/mdxuser/.ssh/id_rsa_mdx.pub"
-    # ssh_private_key_path = "/home/mdxuser/.ssh/id_rsa_mdx"
 
     # loggerの設定
     handler = logging.StreamHandler(sys.stdout)
@@ -943,8 +925,7 @@ def test(auth_info):
     logger.setLevel(logging.DEBUG)
 
     # main
-    mdx = MdxResourceExt()
-    mdx.login(auth_info)
+    mdx = MdxResourceExt(token)
 
     projects = mdx.get_assigned_projects()
     logger.debug(projects)
@@ -1064,17 +1045,9 @@ def test(auth_info):
 
 if __name__ == "__main__":
     # test
-    username = sys.argv[1]
-    password = sys.argv[2]
-
-    # main
-    auth_info = dict(
-        username=username,
-        password=password,
-    )
-
+    token = sys.argv[1]
     # mini test
     # mdx = MdxResourceExt()
-    # mdx.login(auth_info)
+    # mdx.login(token)
 
-    test(auth_info)
+    test(token)

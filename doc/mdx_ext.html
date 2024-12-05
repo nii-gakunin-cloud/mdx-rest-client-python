@@ -1,0 +1,806 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module contents &mdash; mdx REST Client for Python 24.10.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=16d1b579"></script>
+      <script src="_static/doctools.js?v=9a2dae69"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="mdx REST Client for Python documentation" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            mdx REST Client for Python
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Module contents</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#mdx_ext.MdxResourceExt"><code class="docutils literal notranslate"><span class="pre">MdxResourceExt</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#mdx_ext.MdxResourceExt.add_allow_acl_ipv4_info"><code class="docutils literal notranslate"><span class="pre">MdxResourceExt.add_allow_acl_ipv4_info()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mdx_ext.MdxResourceExt.add_allow_acl_ipv6_info"><code class="docutils literal notranslate"><span class="pre">MdxResourceExt.add_allow_acl_ipv6_info()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mdx_ext.MdxResourceExt.add_dnat"><code class="docutils literal notranslate"><span class="pre">MdxResourceExt.add_dnat()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mdx_ext.MdxResourceExt.delete_allow_acl_ipv4_info"><code class="docutils literal notranslate"><span class="pre">MdxResourceExt.delete_allow_acl_ipv4_info()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mdx_ext.MdxResourceExt.delete_allow_acl_ipv6_info"><code class="docutils literal notranslate"><span class="pre">MdxResourceExt.delete_allow_acl_ipv6_info()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mdx_ext.MdxResourceExt.delete_dnat"><code class="docutils literal notranslate"><span class="pre">MdxResourceExt.delete_dnat()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mdx_ext.MdxResourceExt.deploy_vm"><code class="docutils literal notranslate"><span class="pre">MdxResourceExt.deploy_vm()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mdx_ext.MdxResourceExt.destroy_vm"><code class="docutils literal notranslate"><span class="pre">MdxResourceExt.destroy_vm()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mdx_ext.MdxResourceExt.dnat_iter"><code class="docutils literal notranslate"><span class="pre">MdxResourceExt.dnat_iter()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mdx_ext.MdxResourceExt.edit_allow_acl_ipv4_info"><code class="docutils literal notranslate"><span class="pre">MdxResourceExt.edit_allow_acl_ipv4_info()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mdx_ext.MdxResourceExt.edit_allow_acl_ipv6_info"><code class="docutils literal notranslate"><span class="pre">MdxResourceExt.edit_allow_acl_ipv6_info()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mdx_ext.MdxResourceExt.edit_dnat"><code class="docutils literal notranslate"><span class="pre">MdxResourceExt.edit_dnat()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mdx_ext.MdxResourceExt.get_allow_acl_ipv4_info"><code class="docutils literal notranslate"><span class="pre">MdxResourceExt.get_allow_acl_ipv4_info()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mdx_ext.MdxResourceExt.get_allow_acl_ipv6_info"><code class="docutils literal notranslate"><span class="pre">MdxResourceExt.get_allow_acl_ipv6_info()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mdx_ext.MdxResourceExt.get_assignable_global_ipv4"><code class="docutils literal notranslate"><span class="pre">MdxResourceExt.get_assignable_global_ipv4()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mdx_ext.MdxResourceExt.get_assigned_projects"><code class="docutils literal notranslate"><span class="pre">MdxResourceExt.get_assigned_projects()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mdx_ext.MdxResourceExt.get_current_project"><code class="docutils literal notranslate"><span class="pre">MdxResourceExt.get_current_project()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mdx_ext.MdxResourceExt.get_dnat"><code class="docutils literal notranslate"><span class="pre">MdxResourceExt.get_dnat()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mdx_ext.MdxResourceExt.get_project_history"><code class="docutils literal notranslate"><span class="pre">MdxResourceExt.get_project_history()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mdx_ext.MdxResourceExt.get_segment_summary"><code class="docutils literal notranslate"><span class="pre">MdxResourceExt.get_segment_summary()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mdx_ext.MdxResourceExt.get_segments"><code class="docutils literal notranslate"><span class="pre">MdxResourceExt.get_segments()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mdx_ext.MdxResourceExt.get_vm_catalogs"><code class="docutils literal notranslate"><span class="pre">MdxResourceExt.get_vm_catalogs()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mdx_ext.MdxResourceExt.get_vm_history"><code class="docutils literal notranslate"><span class="pre">MdxResourceExt.get_vm_history()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mdx_ext.MdxResourceExt.get_vm_info"><code class="docutils literal notranslate"><span class="pre">MdxResourceExt.get_vm_info()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mdx_ext.MdxResourceExt.get_vm_list"><code class="docutils literal notranslate"><span class="pre">MdxResourceExt.get_vm_list()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mdx_ext.MdxResourceExt.power_off_vm"><code class="docutils literal notranslate"><span class="pre">MdxResourceExt.power_off_vm()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mdx_ext.MdxResourceExt.power_on_vm"><code class="docutils literal notranslate"><span class="pre">MdxResourceExt.power_on_vm()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mdx_ext.MdxResourceExt.power_shutdown_vm"><code class="docutils literal notranslate"><span class="pre">MdxResourceExt.power_shutdown_vm()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mdx_ext.MdxResourceExt.project_history_iter"><code class="docutils literal notranslate"><span class="pre">MdxResourceExt.project_history_iter()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mdx_ext.MdxResourceExt.reboot_vm"><code class="docutils literal notranslate"><span class="pre">MdxResourceExt.reboot_vm()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mdx_ext.MdxResourceExt.refresh_token"><code class="docutils literal notranslate"><span class="pre">MdxResourceExt.refresh_token()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mdx_ext.MdxResourceExt.set_current_project_by_name"><code class="docutils literal notranslate"><span class="pre">MdxResourceExt.set_current_project_by_name()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mdx_ext.MdxResourceExt.set_current_project_id"><code class="docutils literal notranslate"><span class="pre">MdxResourceExt.set_current_project_id()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mdx_ext.MdxResourceExt.vm_info_iter"><code class="docutils literal notranslate"><span class="pre">MdxResourceExt.vm_info_iter()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">mdx REST Client for Python</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Module contents</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/mdx_ext.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-mdx_ext">
+<span id="module-contents"></span><h1>Module contents<a class="headerlink" href="#module-mdx_ext" title="Link to this heading"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="mdx_ext.MdxResourceExt">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mdx_ext.</span></span><span class="sig-name descname"><span class="pre">MdxResourceExt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">init_token</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">endpoint</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'https://oprpl.mdx.jp'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mdx_ext.MdxResourceExt" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>mdx REST API にアクセスするためのPythonクライアントライブラリ。</p>
+<p>mdx REST API による仮想マシンの作成、状態取得、ネットワーク設定などの機能を提供する。</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>init_token</strong> – mdx ユーザポータルから取得した mdx REST API 認証トークン</p></li>
+<li><p><strong>endpoint</strong> – mdx REST API エンドポイント URL (オプショナル)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="mdx_ext.MdxResourceExt.add_allow_acl_ipv4_info">
+<span class="sig-name descname"><span class="pre">add_allow_acl_ipv4_info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">allow_acl_spec</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mdx_ext.MdxResourceExt.add_allow_acl_ipv4_info" title="Link to this definition"></a></dt>
+<dd><p>指定したセグメントにAllow ACL IPv4を追加する</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>allow_acl_spec</strong> – 以下のような、追加するAllow ACL IPv4の仕様</p>
+</dd>
+</dl>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;segment&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ネットワークセグメントID&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;src_address&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Src IPv4アドレス&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;src_mask&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Srcマスク&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;src_port&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Srcポート&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;dst_address&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Dst IPv4アドレス&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;dst_mask&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Dstマスクの文字列表現&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;dst_port&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Dstポートの文字列表現&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;protocol&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;プロトコル&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mdx_ext.MdxResourceExt.add_allow_acl_ipv6_info">
+<span class="sig-name descname"><span class="pre">add_allow_acl_ipv6_info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">allow_acl_spec</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mdx_ext.MdxResourceExt.add_allow_acl_ipv6_info" title="Link to this definition"></a></dt>
+<dd><p>指定したセグメントにAllow ACL IPv6を追加する</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>allow_acl_spec</strong> – 以下のような、追加するAllow ACL IPv6の仕様</p>
+</dd>
+</dl>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;segment&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ネットワークセグメントID&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;src_address&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Src IPv6アドレス&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;src_mask&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Srcマスク&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;src_port&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Srcポート&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;dst_address&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Dst IPv6アドレス&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;dst_mask&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Dstマスクの文字列表現&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;dst_port&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Dstポートの文字列表現&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;protocol&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;プロトコル&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mdx_ext.MdxResourceExt.add_dnat">
+<span class="sig-name descname"><span class="pre">add_dnat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dnat_spec</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mdx_ext.MdxResourceExt.add_dnat" title="Link to this definition"></a></dt>
+<dd><p>指定したセグメントにDNATを追加する</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>dnat_spec</strong> – 以下のような DNAT 設定情報</p>
+</dd>
+</dl>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;pool_address&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;転送元グローバルIPv4アドレス。プロジェクトの未使用グローバルIPアドレスを指定する。&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;segment&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ネットワークセグメントID&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;dst_address&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;転送先プライベートIPアドレス。セグメントIPアドレス範囲内のIPアドレスを指定する。&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mdx_ext.MdxResourceExt.delete_allow_acl_ipv4_info">
+<span class="sig-name descname"><span class="pre">delete_allow_acl_ipv4_info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">acl_ipv4_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mdx_ext.MdxResourceExt.delete_allow_acl_ipv4_info" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>acl_ipv4_id</strong> – 削除対象の Allow ACL IPv4 ID</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mdx_ext.MdxResourceExt.delete_allow_acl_ipv6_info">
+<span class="sig-name descname"><span class="pre">delete_allow_acl_ipv6_info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">acl_ipv6_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mdx_ext.MdxResourceExt.delete_allow_acl_ipv6_info" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>acl_ipv6_id</strong> – 削除対象の Allow ACL IPv6 ID</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mdx_ext.MdxResourceExt.delete_dnat">
+<span class="sig-name descname"><span class="pre">delete_dnat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dnat_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mdx_ext.MdxResourceExt.delete_dnat" title="Link to this definition"></a></dt>
+<dd><p>DNATの削除を実行する</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>dnat_id</strong> – DNAT ID</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mdx_ext.MdxResourceExt.deploy_vm">
+<span class="sig-name descname"><span class="pre">deploy_vm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vm_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vm_spec</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wait_for</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mdx_ext.MdxResourceExt.deploy_vm" title="Link to this definition"></a></dt>
+<dd><p>仮想マシンのデプロイを実行する。wait_forが <code class="docutils literal notranslate"><span class="pre">True</span></code> の場合、仮想マシンにIPv4アドレスが付与されるまで待つ。</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>vm_name</strong> – 仮想マシン名</p></li>
+<li><p><strong>vm_spec</strong> – 仮想マシンの仕様（ハードウェアのカスタマイズ項目）</p></li>
+</ul>
+</dd>
+</dl>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;catalog&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;カタログID&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;disk_size&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;仮想ディスクサイズ(GB)&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;gpu&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;GPU数(数値を文字列で指定)&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;pack_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;パックタイプ(※通常プロジェクトの場合に指定) gpu または cpu を指定&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;pack_num&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;パック数(※通常プロジェクトの場合に指定)&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;network_adapters&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">     </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;adapter_number&quot;</span><span class="p">:</span><span class="w"> </span><span class="nt">&quot;ネットワーク番号&quot;</span>
+<span class="w">        </span><span class="nt">&quot;segment&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ネットワークセグメントID&quot;</span>
+<span class="w">     </span><span class="p">}</span>
+<span class="w">  </span><span class="p">],</span>
+<span class="w">  </span><span class="nt">&quot;shared_key&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;仮想マシンへのSSH接続用公開鍵の文字列&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;storage_network&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ストレージネットワーク&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;template_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;vCenter上の仮想マシンテンプレート名&quot;</span><span class="p">,</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>wait_for</strong> – 仮想マシンにIPv4アドレスが付与されるまで待つ場合 <code class="docutils literal notranslate"><span class="pre">True</span></code> を指定</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>仮想マシン情報。詳細は get_vm_info() を参照のこと。</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mdx_ext.MdxResourceExt.destroy_vm">
+<span class="sig-name descname"><span class="pre">destroy_vm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vm_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wait_for</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mdx_ext.MdxResourceExt.destroy_vm" title="Link to this definition"></a></dt>
+<dd><p>仮想マシンの削除を実行する。事前に仮想マシンを PowerOFF 状態にしておく必要がある。</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>vm_name</strong> – 仮想マシン名</p></li>
+<li><p><strong>wait_for</strong> – 削除完了を待つ場合 <code class="docutils literal notranslate"><span class="pre">True</span></code> を指定</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mdx_ext.MdxResourceExt.dnat_iter">
+<span class="sig-name descname"><span class="pre">dnat_iter</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mdx_ext.MdxResourceExt.dnat_iter" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mdx_ext.MdxResourceExt.edit_allow_acl_ipv4_info">
+<span class="sig-name descname"><span class="pre">edit_allow_acl_ipv4_info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">allow_acl_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allow_acl_spec</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mdx_ext.MdxResourceExt.edit_allow_acl_ipv4_info" title="Link to this definition"></a></dt>
+<dd><p>指定したAllow ACL IPv4を編集する</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>allow_acl_spec</strong> – 以下のような、登録するAllow ACL IPv4の仕様</p>
+</dd>
+</dl>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;src_address&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Src IPv4アドレス&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;src_mask&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Srcマスク&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;src_port&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Srcポート&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;dst_address&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Dst IPv4アドレス&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;dst_mask&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Dstマスクの文字列表現&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;dst_port&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Dstポートの文字列表現&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;protocol&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;プロトコル&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mdx_ext.MdxResourceExt.edit_allow_acl_ipv6_info">
+<span class="sig-name descname"><span class="pre">edit_allow_acl_ipv6_info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">allow_acl_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allow_acl_spec</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mdx_ext.MdxResourceExt.edit_allow_acl_ipv6_info" title="Link to this definition"></a></dt>
+<dd><p>指定したAllow ACL IPv6を編集する</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>allow_acl_spec</strong> – 以下のような、登録するAllow ACL IPv6の仕様</p>
+</dd>
+</dl>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;src_address&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Src IPv6アドレス&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;src_mask&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Srcマスク&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;src_port&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Srcポート&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;dst_address&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Dst IPv6アドレス&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;dst_mask&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Dstマスクの文字列表現&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;dst_port&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Dstポートの文字列表現&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;protocol&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;プロトコル&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mdx_ext.MdxResourceExt.edit_dnat">
+<span class="sig-name descname"><span class="pre">edit_dnat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dnat_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dnat_spec</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mdx_ext.MdxResourceExt.edit_dnat" title="Link to this definition"></a></dt>
+<dd><p>指定したDNAT情報を更新する</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dnat_id</strong> – DNAT ID</p></li>
+<li><p><strong>dnat_spec</strong> – 以下のような DNAT 設定情報</p></li>
+</ul>
+</dd>
+</dl>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;pool_address&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;転送元グローバルIPv4アドレス。プロジェクトの未使用グローバルIPアドレスを指定する。&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;segment&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ネットワークセグメントID&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;dst_address&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;転送先プライベートIPアドレス。セグメントIPアドレス範囲内のIPアドレスを指定する。&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mdx_ext.MdxResourceExt.get_allow_acl_ipv4_info">
+<span class="sig-name descname"><span class="pre">get_allow_acl_ipv4_info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">segment_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mdx_ext.MdxResourceExt.get_allow_acl_ipv4_info" title="Link to this definition"></a></dt>
+<dd><p>Allow ACL IPv4情報の取得</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>segment_id</strong> – ネットワークセグメントID</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>以下のような、プロジェクトに属するAllow ACL IPv4の情報のリスト</p>
+</dd>
+</dl>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">[</span>
+<span class="w">  </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;uuid&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Allow ACL IPv4 ID&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;src_address&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Srcアドレス&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;src_mask&quot;</span><span class="p">:</span><span class="w">  </span><span class="s2">&quot;Srcマスク&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;src_port&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Srcポート&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;dst_address&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Dstアドレス&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;dst_mask&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Dstマスク&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;dst_port&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Dstポート&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;protocol&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;プロトコル&quot;</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mdx_ext.MdxResourceExt.get_allow_acl_ipv6_info">
+<span class="sig-name descname"><span class="pre">get_allow_acl_ipv6_info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">segment_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mdx_ext.MdxResourceExt.get_allow_acl_ipv6_info" title="Link to this definition"></a></dt>
+<dd><p>Allow ACL IPv6情報の取得</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>segment_id</strong> – ネットワークセグメントID</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>以下のような、プロジェクトに属するAllow ACL IPv6の情報のリスト</p>
+</dd>
+</dl>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">[</span>
+<span class="w">  </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;uuid&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Allow ACL IPv6 ID&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;src_address&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Srcアドレス&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;src_mask&quot;</span><span class="p">:</span><span class="w">  </span><span class="s2">&quot;Srcマスク&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;src_port&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Srcポート&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;dst_address&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Dstアドレス&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;dst_mask&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Dstマスク&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;dst_port&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Dstポート&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;protocol&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;プロトコル&quot;</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mdx_ext.MdxResourceExt.get_assignable_global_ipv4">
+<span class="sig-name descname"><span class="pre">get_assignable_global_ipv4</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mdx_ext.MdxResourceExt.get_assignable_global_ipv4" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mdx_ext.MdxResourceExt.get_assigned_projects">
+<span class="sig-name descname"><span class="pre">get_assigned_projects</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mdx_ext.MdxResourceExt.get_assigned_projects" title="Link to this definition"></a></dt>
+<dd><p>ユーザに紐付いたプロジェクト情報を取得する</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>以下のような、プロジェクト情報のリスト</p>
+</dd>
+</dl>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">[</span>
+<span class="w">  </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;uuid&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;機関ID&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;機関名&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;projects&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">       </span><span class="p">{</span>
+<span class="w">          </span><span class="nt">&quot;uuid&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;プロジェクトID&quot;</span><span class="p">,</span>
+<span class="w">          </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;プロジェクト名&quot;</span><span class="p">,</span>
+<span class="w">          </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;プロジェクトのタイプ&quot;</span><span class="p">,</span>
+<span class="w">          </span><span class="nt">&quot;expired&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;プロジェクトの期限が切れたか否か (boolean)&quot;</span>
+<span class="w">       </span><span class="p">}</span>
+<span class="w">    </span><span class="p">]</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mdx_ext.MdxResourceExt.get_current_project">
+<span class="sig-name descname"><span class="pre">get_current_project</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mdx_ext.MdxResourceExt.get_current_project" title="Link to this definition"></a></dt>
+<dd><p>操作対象のmdxのプロジェクトの取得</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>以下のような、プロジェクト情報</p>
+</dd>
+</dl>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">   </span><span class="nt">&quot;uuid&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;プロジェクトID&quot;</span><span class="p">,</span>
+<span class="w">   </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;プロジェクト名&quot;</span><span class="p">,</span>
+<span class="w">   </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;プロジェクトのタイプ&quot;</span><span class="p">,</span>
+<span class="w">   </span><span class="nt">&quot;expired&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;プロジェクトの期限が切れたか否か&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mdx_ext.MdxResourceExt.get_dnat">
+<span class="sig-name descname"><span class="pre">get_dnat</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mdx_ext.MdxResourceExt.get_dnat" title="Link to this definition"></a></dt>
+<dd><p>プロジェクトに属するDNAT情報の取得</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>以下のような、プロジェクトに属する DNAT 情報のリスト</p>
+</dd>
+</dl>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">[</span>
+<span class="w">  </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;uuid&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DNAT ID&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;pool_address&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;転送元グローバルIPv4アドレス&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;segument&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;セグメント名&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;dst_address&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;転送先プライベートIPアドレス&quot;</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mdx_ext.MdxResourceExt.get_project_history">
+<span class="sig-name descname"><span class="pre">get_project_history</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mdx_ext.MdxResourceExt.get_project_history" title="Link to this definition"></a></dt>
+<dd><p>プロジェクト内における操作履歴の情報を取得する</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>以下のような、プロジェクト操作履歴情報のリスト</p>
+</dd>
+</dl>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">[</span>
+<span class="w">  </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;uuid&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;操作履歴ID&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;project&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;プロジェクトID&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;user_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;操作ユーザ名&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;操作種別&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;object_uuid&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;操作対象オブジェクトID&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;object_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;操作対象オブジェクト名&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;start_datetime&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;開始日付 (YYYY-mm-dd HH:MM:SS)&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;end_datetime&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;終了日付 (YYYY-mm-dd HH:MM:SS)&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ステータス&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;progress&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;進捗率&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;error_message&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;エラーメッセージ&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;error_detail&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;エラー詳細&quot;</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mdx_ext.MdxResourceExt.get_segment_summary">
+<span class="sig-name descname"><span class="pre">get_segment_summary</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">segment_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mdx_ext.MdxResourceExt.get_segment_summary" title="Link to this definition"></a></dt>
+<dd><p>ネットワークセグメントのサマリ情報を取得する</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>segment_id</strong> – ネットワークセグメントID</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>以下のような、ネットワークセグメントのサマリ情報</p>
+</dd>
+</dl>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;vlan_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;VLAN ID&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;vni&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;VNI&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;ip_range&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;IPアドレス範囲&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mdx_ext.MdxResourceExt.get_segments">
+<span class="sig-name descname"><span class="pre">get_segments</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mdx_ext.MdxResourceExt.get_segments" title="Link to this definition"></a></dt>
+<dd><p>プロジェクトに紐付いたネットワークセグメント情報を取得する。</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>以下のような、プロジェクトに紐付いたネットワークセグメント情報のリスト</p>
+</dd>
+</dl>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">[</span>
+<span class="w">  </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;uuid&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ネットワークセグメントID&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ネットワークセグメント名&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;default&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;プロジェクト作成時に作成されるデフォルトのネットワークセグメントか否か&quot;</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mdx_ext.MdxResourceExt.get_vm_catalogs">
+<span class="sig-name descname"><span class="pre">get_vm_catalogs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mdx_ext.MdxResourceExt.get_vm_catalogs" title="Link to this definition"></a></dt>
+<dd><p>プロジェクトに紐づいた仮想マシンデプロイカタログ情報を取得する</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>以下のような、カタログのリスト</p>
+</dd>
+</dl>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">[</span>
+<span class="w">  </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;uuid&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;カタログID&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;カタログ名&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;カタログのタイプ&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;template_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;vCenter上の仮想マシンテンプレート名&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;os_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;OS種別&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;os_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;OS名&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;os_version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;OSバージョン&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;hw_version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ハードウェアバージョン&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;説明&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;login_username&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;OSログインユーザ名&quot;</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mdx_ext.MdxResourceExt.get_vm_history">
+<span class="sig-name descname"><span class="pre">get_vm_history</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vm_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mdx_ext.MdxResourceExt.get_vm_history" title="Link to this definition"></a></dt>
+<dd><p>仮想マシンの操作履歴情報を取得する</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>vm_name</strong> – 仮想マシン名</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>以下のような、仮想マシン操作履歴情報</p>
+</dd>
+</dl>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">[</span>
+<span class="w">  </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;uuid&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;操作ID&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;project&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;プロジェクト名&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;user_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ユーザ名&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;操作種別&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;object_uuid&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;対象ID&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;object_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;対象名&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;start_datetime&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;開始日時&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;end_datetime&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;終了日時&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ステータス&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;progress&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;進捗&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;error_message&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;エラーメッセージ&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;error_detail&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;エラー詳細&quot;</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mdx_ext.MdxResourceExt.get_vm_info">
+<span class="sig-name descname"><span class="pre">get_vm_info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vm_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mdx_ext.MdxResourceExt.get_vm_info" title="Link to this definition"></a></dt>
+<dd><p>仮想マシンの詳細情報を取得する</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>vm_name</strong> – 仮想マシン名</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>以下のような仮想マシン情報</p>
+</dd>
+</dl>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;仮想マシン名&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;vm_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;仮想マシンID&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;os_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;OSタイプ&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;仮想マシンの状態&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;vmware_tools&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">     </span><span class="p">{</span>
+<span class="w">       </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;VMware Tools状態&quot;</span><span class="p">,</span>
+<span class="w">       </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;VMware Toolsバージョン&quot;</span>
+<span class="w">     </span><span class="p">}</span>
+<span class="w">  </span><span class="p">],</span>
+<span class="w">  </span><span class="nt">&quot;cpu&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;CPU数&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;memory&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;メモリ量の文字列表現&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;gpu&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;GPU数の文字列表現&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;service_networks&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;adapter_number&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ネットワーク番号&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;ipv4_address&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;IPv4アドレスのリスト&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;ipv6_address&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;IPv6アドレスのリスト&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;segment&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ネットワークセグメント名&quot;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">],</span>
+<span class="w">  </span><span class="nt">&quot;storage_networks&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;adapter_number&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ネットワーク番号&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;ipv4_address&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;IPv4アドレスのリスト&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;ipv6_address&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;IPv6アドレスのリスト&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ネットワークタイプ&quot;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">],</span>
+<span class="w">  </span><span class="nt">&quot;hard_disks&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;disk_number&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;仮想ディスク番号&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;device_key&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;仮想ディスクデバイスキー&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;capacity&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;仮想ディスクサイズ&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;datastore&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;データストア名&quot;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">],</span>
+<span class="w">  </span><span class="nt">&quot;dvd_media&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ゲストOSがマウントしているISOイメージ&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;vcenter&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;vCenter名&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;esxi&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ESXi名&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;pack_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;パックタイプ&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;pack_num&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;パック数&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mdx_ext.MdxResourceExt.get_vm_list">
+<span class="sig-name descname"><span class="pre">get_vm_list</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mdx_ext.MdxResourceExt.get_vm_list" title="Link to this definition"></a></dt>
+<dd><p>プロジェクトに属する仮想マシン情報を取得する</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>以下のような、仮想マシン情報のリスト</p>
+</dd>
+</dl>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">[</span>
+<span class="w">  </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;uuid&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;仮想マシンID&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;仮想マシン名&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;仮想マシンのステータス&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;vcenter&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;vCenter名&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;running_tasks&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;実行中のタスクのリスト&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mdx_ext.MdxResourceExt.power_off_vm">
+<span class="sig-name descname"><span class="pre">power_off_vm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vm_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wait_for</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mdx_ext.MdxResourceExt.power_off_vm" title="Link to this definition"></a></dt>
+<dd><p>仮想マシンの強制停止 (PowerOFF) を実行する。</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>vm_name</strong> – 仮想マシン名</p></li>
+<li><p><strong>wait_for</strong> – 強制停止の完了を待つ場合 <code class="docutils literal notranslate"><span class="pre">True</span></code> を指定</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mdx_ext.MdxResourceExt.power_on_vm">
+<span class="sig-name descname"><span class="pre">power_on_vm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vm_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">service_level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'spot'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wait_for</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mdx_ext.MdxResourceExt.power_on_vm" title="Link to this definition"></a></dt>
+<dd><p>仮想マシンの起動 (PowerON) を実行する。</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>vm_name</strong> – 仮想マシン名</p></li>
+<li><p><strong>wait_for</strong> – 起動の完了を待つ場合 <code class="docutils literal notranslate"><span class="pre">True</span></code> を指定</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mdx_ext.MdxResourceExt.power_shutdown_vm">
+<span class="sig-name descname"><span class="pre">power_shutdown_vm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vm_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wait_for</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mdx_ext.MdxResourceExt.power_shutdown_vm" title="Link to this definition"></a></dt>
+<dd><p>仮想マシンのゲストOSのシャットダウンを実行する。</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>vm_name</strong> – 仮想マシン名</p></li>
+<li><p><strong>wait_for</strong> – シャットダウンの完了を待つ場合 <code class="docutils literal notranslate"><span class="pre">True</span></code> を指定</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mdx_ext.MdxResourceExt.project_history_iter">
+<span class="sig-name descname"><span class="pre">project_history_iter</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mdx_ext.MdxResourceExt.project_history_iter" title="Link to this definition"></a></dt>
+<dd><p>プロジェクト操作履歴をイテレータとして返す。</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mdx_ext.MdxResourceExt.reboot_vm">
+<span class="sig-name descname"><span class="pre">reboot_vm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vm_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wait_for</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mdx_ext.MdxResourceExt.reboot_vm" title="Link to this definition"></a></dt>
+<dd><p>仮想マシンの再起動を実行する。</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>vm_name</strong> – 仮想マシン名</p></li>
+<li><p><strong>wait_for</strong> – 再起動の完了を待つ場合 <code class="docutils literal notranslate"><span class="pre">True</span></code> を指定</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mdx_ext.MdxResourceExt.refresh_token">
+<span class="sig-name descname"><span class="pre">refresh_token</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mdx_ext.MdxResourceExt.refresh_token" title="Link to this definition"></a></dt>
+<dd><p>mdx REST API 認証トークンを更新する</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mdx_ext.MdxResourceExt.set_current_project_by_name">
+<span class="sig-name descname"><span class="pre">set_current_project_by_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">project_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mdx_ext.MdxResourceExt.set_current_project_by_name" title="Link to this definition"></a></dt>
+<dd><p>操作対象のmdxのプロジェクトをプロジェクト名で設定する</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mdx_ext.MdxResourceExt.set_current_project_id">
+<span class="sig-name descname"><span class="pre">set_current_project_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">project_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mdx_ext.MdxResourceExt.set_current_project_id" title="Link to this definition"></a></dt>
+<dd><p>操作対象のmdxのプロジェクトIDを設定する</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mdx_ext.MdxResourceExt.vm_info_iter">
+<span class="sig-name descname"><span class="pre">vm_info_iter</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mdx_ext.MdxResourceExt.vm_info_iter" title="Link to this definition"></a></dt>
+<dd><p>仮想マシン一覧をイテレータとして返す。</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="mdx REST Client for Python documentation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, NII.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
