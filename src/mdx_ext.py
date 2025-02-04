@@ -170,6 +170,66 @@ class MdxResourceExt(object):
 
         return self._mdxlib.get_vm_info(vm_id)
 
+    def clone_vm(self, original_vm_name, vm_name, vm_spec, power_on=False, wait_for=True):
+        '''
+        仮想マシンのクローンを実行する。
+
+        :param original_vm_name: クローン元仮想マシン名
+        :param vm_name: 作成した仮想マシンに付与するマシン名
+        :param vm_spec: 仮想マシンの仕様（ハードウェアのカスタマイズ項目）
+
+        .. code-block:: json
+
+          {
+            "vm_name": "仮想マシン名",
+            "pack_type": "パックタイプ(※通常プロジェクトの場合に指定) gpu または cpu を指定",
+            "pack_num": "パック数(※通常プロジェクトの場合に指定)",
+            "gpu": "GPU数(数値を文字列で指定)",
+            "network_adapters": [
+               {
+                  "adapter_number": "ネットワーク番号"
+                  "segment": "ネットワークセグメントID"
+               }
+            ],
+            "storage_network": "ストレージネットワーク"
+          }
+
+        :param power_on: クローン後起動する場合 ``True`` を指定
+        :param wait_for: 仮想マシン起動後、仮想マシンにIPv4アドレスが付与されるまで待つ場合 ``True`` を指定
+          power_on=Falseの場合、Trueを指定しても無効。
+        :returns: 仮想マシン情報。詳細は get_vm_info() を参照のこと。
+        '''
+
+        self._check_project_id()
+
+        # OSタイプ指定は固定値とする
+        vm_spec["os_type"] = "Linux"
+        vm_spec["project"] = self._project_id
+        vm_spec["vm_name"] = vm_name
+
+        org_vm_id = self._find_vm(original_vm_name)
+
+        self._mdxlib.clone_vm(org_vm_id, vm_spec)
+        vm_id = self._find_vm(vm_name)
+
+        if power_on:
+            # クローン完了前に起動しようとすると失敗するので待機する
+            self._wait_until(vm_id, "PowerOFF")
+            self._mdxlib.power_on_vm(vm_id, vm_spec.get('service_level'))
+            if wait_for:
+                self._wait_until(vm_id, "PowerON")
+                for i in range(0, DEPLOY_VM_SLEEP_COUNT):
+                    vm_info = self._mdxlib.get_vm_info(vm_id)
+                    private_ip_address = vm_info["service_networks"][0]["ipv4_address"][0]
+                    logger.debug("{} {}".format(i, private_ip_address))
+                    if re.match(r"^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$", private_ip_address) is not None:
+                        break
+                    time.sleep(SLEEP_TIME_SEC)
+                else:
+                    raise MdxRestException("{}: timeout: allocate ip address".format(vm_name))
+
+        return self._mdxlib.get_vm_info(vm_id)
+
     def destroy_vm(self, vm_name, wait_for=True):
         """
         仮想マシンの削除を実行する。事前に仮想マシンを PowerOFF 状態にしておく必要がある。

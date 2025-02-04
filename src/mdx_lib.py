@@ -1,7 +1,9 @@
+import copy
+import json
 import logging
 import urllib
+import inspect
 import requests
-import json
 
 DEFAULT_MDX_ENDPOINT = "https://oprpl.mdx.jp"
 
@@ -146,6 +148,40 @@ class MdxLib(object):
             )
         # task id が返る
         logger.debug("deploy vm: {}".format(res.text))
+        resp_body = res.json()
+        return resp_body["task_id"]
+
+    def clone_vm(self, original_vm_id: str, mdx_vm_spec: dict):
+        """
+        VMをクローンする。
+
+        :param original_vm_id: クローン元の仮想マシンID
+        :param mdx_vm_spec: mdxでのVMのスペック情報
+
+        .. code-block:: json
+
+           {
+              "project": プロジェクトID
+              "vm_name": 仮想マシン名
+              "storage_network": ストレージネットワーク "sr-iov" または "pvrdma" または "portgroup"
+              "pack_type": パックタイプ "gpu" または "cpu"
+              "pack_num": パック数
+              "service_level": サービスレベルの指定 "spot" または "guarantee"
+              "network_adapters": ネットワークアダプタ情報(list)
+           }
+
+        """
+
+        data = copy.deepcopy(mdx_vm_spec)
+        res = self._call_api(f"/api/vm/{original_vm_id}/clone/", method="POST", data=data)
+        func_name = inspect.currentframe().f_code.co_name
+        if res.status_code != 202:
+            raise MdxRestException(
+                "mdxlib: {} is failed: {}".format(func_name, res.text),
+                status_code=res.status_code,
+            )
+
+        logger.debug("{}: {}".format(func_name, res.text))
         resp_body = res.json()
         return resp_body["task_id"]
 
