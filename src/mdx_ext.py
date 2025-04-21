@@ -11,7 +11,7 @@ import re
 import sys
 import time
 
-from mdx_lib import MdxLib, MdxRestException, DEFAULT_MDX_ENDPOINT
+from .mdx_lib import MdxLib, MdxRestException, DEFAULT_MDX_ENDPOINT
 
 SLEEP_TIME_SEC = 5
 SLEEP_COUNT = 120

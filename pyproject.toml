@@ -7,11 +7,11 @@ requires-python = ">=3.10"
 dynamic = ["dependencies"]
 
 [tool.setuptools]
-package-dir = {"" = "src"}
+package-dir = { "mdx" = "src" }
 
 [tool.setuptools.dynamic]
 dependencies = {file = ["requirements.txt"]}
 
 [build-system]
-requires = ["setuptools>=61.0"]
+requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
