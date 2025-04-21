@@ -1,13 +1,18 @@
 #
 # mdx extension
 #
+import ipaddress
 import json
 import jsonschema
 import logging
+import os
+import pexpect
 import re
 import sys
 import time
+
 from mdx_lib import MdxLib, MdxRestException, DEFAULT_MDX_ENDPOINT
+
 SLEEP_TIME_SEC = 5
 SLEEP_COUNT = 120
 DEPLOY_VM_SLEEP_COUNT = 240
@@ -100,11 +105,24 @@ class MdxResourceExt(object):
         """
         self._mdxlib.refresh_token()
 
-    def deploy_vm(self, vm_name, vm_spec, wait_for=True):
+    def set_first_password(self, host, password, ssh_key='~/.ssh/id_ed25519', username="mdxuser"):
+
+        ssh_args = ("-o StrictHostKeyChecking=no " +
+                    "-o UserKnownHostsFile=/dev/null " +
+                    "-o PreferredAuthentications=publickey")
+        cmd = "ssh {} -i {} {}@{}".format(ssh_args, os.path.expanduser(ssh_key), username, host)
+        conn = pexpect.spawn(cmd, encoding='utf-8', timeout=30)
+        conn.expect("New password: ")
+        conn.sendline(password)
+        conn.expect("Retype new password: ")
+        conn.sendline(password)
+        conn.expect("passwd: password updated successfully")
+
+    def deploy_vm(self, vm_name, vm_spec, wait_for=True) -> list:
         '''
         仮想マシンのデプロイを実行する。wait_forが ``True`` の場合、仮想マシンにIPv4アドレスが付与されるまで待つ。
 
-        :param vm_name: 仮想マシン名
+        :param vm_name: 仮想マシン名 vmname-`[1-3]` のように指定すると、`vmname-1`,`vmname-2`,`vmname-3`というように、指定した数分仮想マシンを作成する。
         :param vm_spec: 仮想マシンの仕様（ハードウェアのカスタマイズ項目）
 
         .. code-block:: json
@@ -144,31 +162,26 @@ class MdxResourceExt(object):
         vm_spec["project"] = self._project_id
         vm_spec["vm_name"] = vm_name
 
-        self._mdxlib.deploy_vm(vm_spec)
-        vm_id = self._find_vm(vm_name)
+        deployed_vm_tasks = self._mdxlib.deploy_vm(vm_spec)
         if wait_for:
-            # historyで待つ
-            # for _i in range(0, SLEEP_COUNT):
-            #     # vm_info = self._mdxlib.get_vm_info(vm_id)
-            #     vm_history = self._mdxlib.get_vm_history(vm_id)
-            #     # print(json.dumps(vm_history["results"][0], indent=2))
-            #     #
-            #     if vm_history["results"][0]["status"] == "Completed":
-            #         break
-            #     time.sleep(SLEEP_TIME_SEC)
-            # TODO: sshできるまで待つ?
-            self._wait_until(vm_id, "PowerON")
-            for i in range(0, DEPLOY_VM_SLEEP_COUNT):
-                vm_info = self._mdxlib.get_vm_info(vm_id)
-                private_ip_address = vm_info["service_networks"][0]["ipv4_address"][0]
-                logger.debug("{} {}".format(i, private_ip_address))
-                if re.match(r"^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$", private_ip_address) is not None:
-                    break
-                time.sleep(SLEEP_TIME_SEC)
-            else:
-                raise MdxRestException("{}: timeout: allocate ip address".format(vm_name))
-
-        return self._mdxlib.get_vm_info(vm_id)
+            for vm_task in deployed_vm_tasks:
+                vm_id = vm_task['object_uuid']
+                self._wait_until(vm_id, "PowerON")
+                for i in range(0, DEPLOY_VM_SLEEP_COUNT):
+                    vm_info = self._mdxlib.get_vm_info(vm_id)
+                    private_ip_address = vm_info["service_networks"][0]["ipv4_address"][0]
+                    logger.debug("{} {}".format(i, private_ip_address))
+                    try:
+                        ipaddress.ip_address(private_ip_address)
+                        break
+                    except ValueError:
+                        time.sleep(SLEEP_TIME_SEC)
+                else:
+                    raise MdxRestException("{}: timeout: allocate ip address".format(vm_name))
+        vm_infos = []
+        for task in deployed_vm_tasks:
+            vm_infos.append(self._mdxlib.get_vm_info(task['object_uuid']))
+        return vm_infos
 
     def clone_vm(self, original_vm_name, vm_name, vm_spec, power_on=False, wait_for=True):
         '''

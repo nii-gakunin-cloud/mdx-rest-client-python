@@ -1,9 +1,11 @@
 import copy
+import re
 import json
 import logging
 import urllib
 import inspect
 import requests
+import time
 
 DEFAULT_MDX_ENDPOINT = "https://oprpl.mdx.jp"
 
@@ -83,6 +85,47 @@ class MdxLib(object):
         resp_body = res.json()
         self._token = resp_body["token"]
 
+    def _get_vm_info_by_name(self, project_id, vm_name, wait=True):
+
+        for _ in range(10):
+            vm_list = self.get_vm_list(project_id)
+
+            for vm_info in vm_list['results']:
+                if vm_info['name'] == vm_name:
+                    return vm_info
+            else:
+                if wait is False:
+                    return
+                time.sleep(10)
+
+    def _predict_vmnames(self, s):
+        match = re.fullmatch(r"(.*)\[(\d+)-(\d+)\](.*)", s)
+        if not match:
+            single_range = re.fullmatch(r"(.*)\[(\d+)\](.*)", s)
+            if single_range:
+                return [s.replace('[', '').replace(']', '')]
+            else:
+                return [s]
+
+        prefix, start, end, suffix = match.groups()
+        width = max(len(start), len(end))
+        return [f"{prefix}{str(i).zfill(width)}{suffix}" for i in range(int(start), int(end) + 1)]
+
+    def _get_task_info(self, project_id, vm_name, task_id):
+
+        vm_info = None
+        for _ in range(10):
+            vm_info = self._get_vm_info_by_name(project_id, vm_name)
+            if vm_info is not None:
+                break
+            time.sleep(10)
+        vm_histories = self.get_vm_history(vm_info['uuid'])
+        for vm_history in vm_histories['results']:
+            if vm_history['uuid'] == task_id:
+                return vm_history
+            else:
+                return None
+
     def refresh_token(self):
         self._refresh_token()
 
@@ -103,7 +146,7 @@ class MdxLib(object):
         """
         self._login(auth_info)
 
-    def deploy_vm(self, mdx_vm_spec):
+    def deploy_vm(self, mdx_vm_spec) -> list:
         """
         VMを作成(デプロイ)する。(非同期)
         デプロイの完了を vm_info APIで確認すること。
@@ -148,8 +191,17 @@ class MdxLib(object):
             )
         # task id が返る
         logger.debug("deploy vm: {}".format(res.text))
-        resp_body = res.json()
-        return resp_body["task_id"]
+        task_ids = res.json()['task_id']
+        vm_names = self._predict_vmnames(mdx_vm_spec['vm_name'])
+        tasks = []
+        for vm_name in vm_names:
+            for i, task_id in enumerate(task_ids):
+                task_info = self._get_task_info(mdx_vm_spec['project'], vm_name, task_id)
+                if task_info is not None:
+                    tasks.append(task_info)
+                    del task_ids[i]
+                    break
+        return tasks
 
     def clone_vm(self, original_vm_id: str, mdx_vm_spec: dict):
         """
@@ -294,7 +346,6 @@ class MdxLib(object):
         return res.json()
 
     def get_vm_history(self, vm_id, page=1, page_size=1000):
-        # TODO: DeployingのVMに対してはvm_idがふられているが、historyが取れない?
         res = self._call_api(
             "/api/history/vm/{}/?page={}&page_size={}".format(vm_id, page, page_size),
             method="GET")
