@@ -9,9 +9,7 @@ import os
 from pathlib import Path
 import sys
 
-sys.path.insert(0, str(Path(
-    os.path.dirname(__file__), '..', '..', 'src').resolve()))
-
+sys.path.insert(0, os.path.abspath('../../'))
 
 project = 'mdx REST Client for Python'
 copyright = '2024, NII'

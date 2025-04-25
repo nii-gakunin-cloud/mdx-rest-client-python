@@ -1,7 +1,7 @@
 Module contents
 ---------------
 
-.. automodule:: mdx_ext
+.. automodule:: src.mdx_ext
    :members:
    :undoc-members:
    :show-inheritance:
