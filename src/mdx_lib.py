@@ -1,7 +1,11 @@
+import copy
+import re
+import json
 import logging
 import urllib
+import inspect
 import requests
-import json
+import time
 
 DEFAULT_MDX_ENDPOINT = "https://oprpl.mdx.jp"
 
@@ -81,6 +85,47 @@ class MdxLib(object):
         resp_body = res.json()
         self._token = resp_body["token"]
 
+    def _get_vm_info_by_name(self, project_id, vm_name, wait=True):
+
+        for _ in range(10):
+            vm_list = self.get_vm_list(project_id)
+
+            for vm_info in vm_list['results']:
+                if vm_info['name'] == vm_name:
+                    return vm_info
+            else:
+                if wait is False:
+                    return
+                time.sleep(10)
+
+    def _predict_vmnames(self, s):
+        match = re.fullmatch(r"(.*)\[(\d+)-(\d+)\](.*)", s)
+        if not match:
+            single_range = re.fullmatch(r"(.*)\[(\d+)\](.*)", s)
+            if single_range:
+                return [s.replace('[', '').replace(']', '')]
+            else:
+                return [s]
+
+        prefix, start, end, suffix = match.groups()
+        width = max(len(start), len(end))
+        return [f"{prefix}{str(i).zfill(width)}{suffix}" for i in range(int(start), int(end) + 1)]
+
+    def _get_task_info(self, project_id, vm_name, task_id):
+
+        vm_info = None
+        for _ in range(10):
+            vm_info = self._get_vm_info_by_name(project_id, vm_name)
+            if vm_info is not None:
+                break
+            time.sleep(10)
+        vm_histories = self.get_vm_history(vm_info['uuid'])
+        for vm_history in vm_histories['results']:
+            if vm_history['uuid'] == task_id:
+                return vm_history
+            else:
+                return None
+
     def refresh_token(self):
         self._refresh_token()
 
@@ -101,7 +146,7 @@ class MdxLib(object):
         """
         self._login(auth_info)
 
-    def deploy_vm(self, mdx_vm_spec):
+    def deploy_vm(self, mdx_vm_spec) -> list:
         """
         VMを作成(デプロイ)する。(非同期)
         デプロイの完了を vm_info APIで確認すること。
@@ -146,6 +191,49 @@ class MdxLib(object):
             )
         # task id が返る
         logger.debug("deploy vm: {}".format(res.text))
+        task_ids = res.json()['task_id']
+        vm_names = self._predict_vmnames(mdx_vm_spec['vm_name'])
+        tasks = []
+        for vm_name in vm_names:
+            for i, task_id in enumerate(task_ids):
+                task_info = self._get_task_info(mdx_vm_spec['project'], vm_name, task_id)
+                if task_info is not None:
+                    tasks.append(task_info)
+                    del task_ids[i]
+                    break
+        return tasks
+
+    def clone_vm(self, original_vm_id: str, mdx_vm_spec: dict):
+        """
+        VMをクローンする。
+
+        :param original_vm_id: クローン元の仮想マシンID
+        :param mdx_vm_spec: mdxでのVMのスペック情報
+
+        .. code-block:: json
+
+           {
+              "project": プロジェクトID
+              "vm_name": 仮想マシン名
+              "storage_network": ストレージネットワーク "sr-iov" または "pvrdma" または "portgroup"
+              "pack_type": パックタイプ "gpu" または "cpu"
+              "pack_num": パック数
+              "service_level": サービスレベルの指定 "spot" または "guarantee"
+              "network_adapters": ネットワークアダプタ情報(list)
+           }
+
+        """
+
+        data = copy.deepcopy(mdx_vm_spec)
+        res = self._call_api(f"/api/vm/{original_vm_id}/clone/", method="POST", data=data)
+        func_name = inspect.currentframe().f_code.co_name
+        if res.status_code != 202:
+            raise MdxRestException(
+                "mdxlib: {} is failed: {}".format(func_name, res.text),
+                status_code=res.status_code,
+            )
+
+        logger.debug("{}: {}".format(func_name, res.text))
         resp_body = res.json()
         return resp_body["task_id"]
 
@@ -192,11 +280,12 @@ class MdxLib(object):
             )
         return res.json()
 
-    def power_on_vm(self, vm_id):
+    def power_on_vm(self, vm_id, service_level="spot"):
         """
         仮想マシンの起動 (電源オン) (非同期)
         """
-        res = self._call_api("/api/vm/{}/power_on/".format(vm_id), method="POST")
+        data = {'service_level': service_level}
+        res = self._call_api("/api/vm/{}/power_on/".format(vm_id), method="POST", data=data)
         if res.status_code != 202:
             raise MdxRestException(
                 "mdxlib: power_on vm is failed: {}".format(res.text),
@@ -226,7 +315,7 @@ class MdxLib(object):
             )
         return res.json()
 
-    def get_project_history(self, project_id, page=1, page_size=10):
+    def get_project_history(self, project_id, page=1, page_size=10000):
         data = dict(
             page=page,
             page_size=page_size,
@@ -241,7 +330,7 @@ class MdxLib(object):
             )
         return res.json()
 
-    def get_vm_list(self, project_id, page=1, page_size=10):
+    def get_vm_list(self, project_id, page=1, page_size=10000):
         data = dict(
             page=page,
             page_size=page_size,
@@ -256,10 +345,10 @@ class MdxLib(object):
             )
         return res.json()
 
-    def get_vm_history(self, vm_id):
-        # TODO: DeployingのVMに対してはvm_idがふられているが、historyが取れない?
-        """ """
-        res = self._call_api("/api/history/vm/{}/".format(vm_id), method="GET")
+    def get_vm_history(self, vm_id, page=1, page_size=1000):
+        res = self._call_api(
+            "/api/history/vm/{}/?page={}&page_size={}".format(vm_id, page, page_size),
+            method="GET")
         if res.status_code != 200:
             raise MdxRestException(
                 "mdxlib: get vm history is failed: {} {}".format(vm_id, res.text),
@@ -308,7 +397,7 @@ class MdxLib(object):
 
     def get_vm_catalogs(self, project_id):
         res = self._call_api(
-            "/api/catalog/project/{}/?page=1&page_size=50".format(project_id),
+            "/api/catalog/project/{}/?page=1&page_size=10000".format(project_id),
             method="GET",
         )
         if res.status_code != 200:
@@ -321,7 +410,7 @@ class MdxLib(object):
         return res.json()
 
     def get_allow_acl_ipv4_info(self, segment_id):
-        res = self._call_api("/api/acl/segment/{}/".format(segment_id), method="GET")
+        res = self._call_api("/api/acl/segment/{}/?page=1&page_size=10000".format(segment_id), method="GET")
         if res.status_code != 200:
             raise MdxRestException(
                 "mdxlib: get_allow_acl_ipv4_info is failed: {} {}".format(
@@ -341,6 +430,17 @@ class MdxLib(object):
             )
         return res.json()
 
+    def edit_allow_acl_ipv4_info(self, acl_ipv4_id, allow_acl_spec):
+        # TODO: validate allow_acl_spec with jsonschema
+        res = self._call_api("/api/acl/{}/".format(acl_ipv4_id),
+                             data=json.dumps(allow_acl_spec), method="PUT")
+        if res.status_code != 200:
+            raise MdxRestException(
+                "mdxlib: edit_allow_acl_ipv4_info is failed: {}".format(res.text),
+                status_code=res.status_code,
+            )
+        return res.json()
+
     def delete_allow_acl_ipv4_info(self, acl_ipv4_id):
         res = self._call_api("/api/acl/{}/".format(acl_ipv4_id), method="DELETE")
         if res.status_code != 204:
@@ -348,9 +448,50 @@ class MdxLib(object):
                 "mdxlib: delete_allow_acl_ipv4_info is failed: {}".format(res.text),
                 status_code=res.status_code,
             )
-        # 返り値(json)なし
+        # 返り値なし
 
-    # TODO: put (edit) allow acl...
+    def get_allow_acl_ipv6_info(self, segment_id):
+        res = self._call_api(
+            "/api/acl_v6/segment/{}/?page=1&page_size=10000".format(segment_id),
+            method="GET")
+        if res.status_code != 200:
+            raise MdxRestException(
+                "mdxlib: get_allow_acl_ipv6_info is failed: {} {}".format(
+                    segment_id, res.text
+                ),
+                status_code=res.status_code,
+            )
+        return res.json()
+
+    def add_allow_acl_ipv6_info(self, allow_acl_spec):
+        # TODO: validate allow_acl_spec with jsonschema
+        res = self._call_api("/api/acl_v6/", data=allow_acl_spec, method="POST")
+        if res.status_code != 201:
+            raise MdxRestException(
+                "mdxlib: add_allow_acl_ipv6_info is failed: {}".format(res.text),
+                status_code=res.status_code,
+            )
+        return res.json()
+
+    def edit_allow_acl_ipv6_info(self, acl_ipv6_id, allow_acl_spec):
+        # TODO: validate allow_acl_spec with jsonschema
+        res = self._call_api("/api/acl_v6/{}/".format(acl_ipv6_id),
+                             data=json.dumps(allow_acl_spec), method="PUT")
+        if res.status_code != 200:
+            raise MdxRestException(
+                "mdxlib: edit_allow_acl_ipv6_info is failed: {}".format(res.text),
+                status_code=res.status_code,
+            )
+        return res.json()
+
+    def delete_allow_acl_ipv6_info(self, acl_ipv6_id):
+        res = self._call_api("/api/acl_v6/{}/".format(acl_ipv6_id), method="DELETE")
+        if res.status_code != 204:
+            raise MdxRestException(
+                "mdxlib: delete_allow_acl_ipv6_info is failed: {}".format(res.text),
+                status_code=res.status_code,
+            )
+        # 返り値なし
 
     def get_segments(self, project_id):
         res = self._call_api(
@@ -375,7 +516,7 @@ class MdxLib(object):
         return res.json()
 
     # dnat
-    def get_dnat(self, project_id, page=1, page_size=10):
+    def get_dnat(self, project_id, page=1, page_size=10000):
         data = dict(
             page=page,
             page_size=page_size,
@@ -419,6 +560,19 @@ class MdxLib(object):
                 "proj-{}:dnat-{}|mdxlib: delete_dnat is failed: {}".format(
                     project_id, dnat_id, res.text
                 ),
+                status_code=res.status_code,
+            )
+        # 返り値(json)なし
+        return res
+
+    def get_assignable_global_ipv4(self, project_id):
+        res = self._call_api(
+            "/api/global_ip/project/{}/assignable/".format(project_id),
+            method="GET"
+        )
+        if res.status_code != 200:
+            raise MdxRestException(
+                "mdxlib: get project history is failed: {}".format(res.text),
                 status_code=res.status_code,
             )
         return res.json()

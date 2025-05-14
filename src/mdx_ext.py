@@ -1,17 +1,22 @@
 #
 # mdx extension
 #
+import ipaddress
 import json
 import jsonschema
 import logging
+import os
+import pexpect
 import re
 import sys
 import time
-from mdx_lib import MdxLib, MdxRestException, DEFAULT_MDX_ENDPOINT
+
+from .mdx_lib import MdxLib, MdxRestException, DEFAULT_MDX_ENDPOINT
+
 SLEEP_TIME_SEC = 5
 SLEEP_COUNT = 120
 DEPLOY_VM_SLEEP_COUNT = 240
-
+DELETABLE_STATE = ["PowerOFF", "Deallocated"]
 
 logger = logging.getLogger(__name__)
 # project_id, vm_name, os_typeを外した
@@ -94,58 +99,54 @@ class MdxResourceExt(object):
         if self._project_id is None:
             raise MdxRestException("call set_project_id to set target mdx project")
 
-    def login(self, auth_info):
-        """
-        mdx REST API 認証トークンを発行する（開発用）
-        通常利用時は mdx ユーザポータルから認証トークンを取得し、__init__ の init_token 引数に指定すること。
-
-        :param auth_info: 以下のような、mdx REST APIの認証情報
-
-        .. code-block:: json
-
-          {
-             "username": mdx REST API ユーザ名
-             "password": mdx REST API パスワード
-          }
-
-        """
-        self._mdxlib.login(auth_info)
-
     def refresh_token(self):
         """
         mdx REST API 認証トークンを更新する
         """
         self._mdxlib.refresh_token()
 
-    def deploy_vm(self, vm_name, vm_spec, wait_for=True):
-        """
+    def set_first_password(self, host, password, ssh_key='~/.ssh/id_ed25519', username="mdxuser"):
+
+        ssh_args = ("-o StrictHostKeyChecking=no " +
+                    "-o UserKnownHostsFile=/dev/null " +
+                    "-o PreferredAuthentications=publickey")
+        cmd = "ssh {} -i {} {}@{}".format(ssh_args, os.path.expanduser(ssh_key), username, host)
+        conn = pexpect.spawn(cmd, encoding='utf-8', timeout=30)
+        conn.expect("New password: ")
+        conn.sendline(password)
+        conn.expect("Retype new password: ")
+        conn.sendline(password)
+        conn.expect("passwd: password updated successfully")
+
+    def deploy_vm(self, vm_name, vm_spec, wait_for=True) -> list:
+        '''
         仮想マシンのデプロイを実行する。wait_forが ``True`` の場合、仮想マシンにIPv4アドレスが付与されるまで待つ。
 
-        :param vm_name: 仮想マシン名
+        :param vm_name: 仮想マシン名 vmname-`[1-3]` のように指定すると、`vmname-1`,`vmname-2`,`vmname-3`というように、指定した数分仮想マシンを作成する。
         :param vm_spec: 仮想マシンの仕様（ハードウェアのカスタマイズ項目）
 
         .. code-block:: json
 
           {
-            "catalog": カタログID
-            "disk_size": 仮想ディスクサイズ(GB)
-            "gpu": GPU数(数値を文字列で指定)
-            "pack_type": パックタイプ(※通常プロジェクトの場合に指定) "gpu" または "cpu" を指定
-            "pack_num": パック数(※通常プロジェクトの場合に指定)
+            "catalog": "カタログID",
+            "disk_size": "仮想ディスクサイズ(GB)",
+            "gpu": "GPU数(数値を文字列で指定)",
+            "pack_type": "パックタイプ(※通常プロジェクトの場合に指定) gpu または cpu を指定",
+            "pack_num": "パック数(※通常プロジェクトの場合に指定)",
             "network_adapters": [
                {
-                  "adapter_number": ネットワーク番号
-                  "segment": ネットワークセグメントID
+                  "adapter_number": "ネットワーク番号"
+                  "segment": "ネットワークセグメントID"
                }
             ],
-            "shared_key": 仮想マシンへのSSH接続用公開鍵の文字列
-            "storage_network": ストレージネットワーク "sr-iov", "pvrdma", "portgroup" のいずれかを指定
-            "template_name": vCenter上の仮想マシンテンプレート名
+            "shared_key": "仮想マシンへのSSH接続用公開鍵の文字列",
+            "storage_network": "ストレージネットワーク",
+            "template_name": "vCenter上の仮想マシンテンプレート名",
           }
 
         :param wait_for: 仮想マシンにIPv4アドレスが付与されるまで待つ場合 ``True`` を指定
         :returns: 仮想マシン情報。詳細は get_vm_info() を参照のこと。
-        """
+        '''
         # 専有プロジェクトの場合
         # "cpu": CPU数(※専有プロジェクトの場合に必要)
         # "memory": メモリ量(GB) (※専有プロジェクトの場合に必要)
@@ -161,29 +162,84 @@ class MdxResourceExt(object):
         vm_spec["project"] = self._project_id
         vm_spec["vm_name"] = vm_name
 
-        self._mdxlib.deploy_vm(vm_spec)
-        vm_id = self._find_vm(vm_name)
+        deployed_vm_tasks = self._mdxlib.deploy_vm(vm_spec)
         if wait_for:
-            # historyで待つ
-            # for _i in range(0, SLEEP_COUNT):
-            #     # vm_info = self._mdxlib.get_vm_info(vm_id)
-            #     vm_history = self._mdxlib.get_vm_history(vm_id)
-            #     # print(json.dumps(vm_history["results"][0], indent=2))
-            #     #
-            #     if vm_history["results"][0]["status"] == "Completed":
-            #         break
-            #     time.sleep(SLEEP_TIME_SEC)
-            # TODO: sshできるまで待つ?
-            self._wait_until(vm_id, "PowerON")
-            for i in range(0, DEPLOY_VM_SLEEP_COUNT):
-                vm_info = self._mdxlib.get_vm_info(vm_id)
-                private_ip_address = vm_info["service_networks"][0]["ipv4_address"][0]
-                logger.debug("{} {}".format(i, private_ip_address))
-                if re.match(r"^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$", private_ip_address) is not None:
-                    break
-                time.sleep(SLEEP_TIME_SEC)
-            else:
-                raise MdxRestException("{}: timeout: allocate ip address".format(vm_name))
+            for vm_task in deployed_vm_tasks:
+                vm_id = vm_task['object_uuid']
+                self._wait_until(vm_id, "PowerON")
+                for i in range(0, DEPLOY_VM_SLEEP_COUNT):
+                    vm_info = self._mdxlib.get_vm_info(vm_id)
+                    private_ip_address = vm_info["service_networks"][0]["ipv4_address"][0]
+                    logger.debug("{} {}".format(i, private_ip_address))
+                    try:
+                        ipaddress.ip_address(private_ip_address)
+                        break
+                    except ValueError:
+                        time.sleep(SLEEP_TIME_SEC)
+                else:
+                    raise MdxRestException("{}: timeout: allocate ip address".format(vm_name))
+        vm_infos = []
+        for task in deployed_vm_tasks:
+            vm_infos.append(self._mdxlib.get_vm_info(task['object_uuid']))
+        return vm_infos
+
+    def clone_vm(self, original_vm_name, vm_name, vm_spec, power_on=False, wait_for=True):
+        '''
+        仮想マシンのクローンを実行する。
+
+        :param original_vm_name: クローン元仮想マシン名
+        :param vm_name: 作成した仮想マシンに付与するマシン名
+        :param vm_spec: 仮想マシンの仕様（ハードウェアのカスタマイズ項目）
+
+        .. code-block:: json
+
+          {
+            "vm_name": "仮想マシン名",
+            "pack_type": "パックタイプ(※通常プロジェクトの場合に指定) gpu または cpu を指定",
+            "pack_num": "パック数(※通常プロジェクトの場合に指定)",
+            "gpu": "GPU数(数値を文字列で指定)",
+            "network_adapters": [
+               {
+                  "adapter_number": "ネットワーク番号"
+                  "segment": "ネットワークセグメントID"
+               }
+            ],
+            "storage_network": "ストレージネットワーク"
+          }
+
+        :param power_on: クローン後起動する場合 ``True`` を指定
+        :param wait_for: 仮想マシン起動後、仮想マシンにIPv4アドレスが付与されるまで待つ場合 ``True`` を指定
+          power_on=Falseの場合、Trueを指定しても無効。
+        :returns: 仮想マシン情報。詳細は get_vm_info() を参照のこと。
+        '''
+
+        self._check_project_id()
+
+        # OSタイプ指定は固定値とする
+        vm_spec["os_type"] = "Linux"
+        vm_spec["project"] = self._project_id
+        vm_spec["vm_name"] = vm_name
+
+        org_vm_id = self._find_vm(original_vm_name)
+
+        self._mdxlib.clone_vm(org_vm_id, vm_spec)
+        vm_id = self._find_vm(vm_name)
+
+        if power_on:
+            # クローン完了前に起動しようとすると失敗するので待機する
+            self._wait_until(vm_id, "PowerOFF")
+            self._mdxlib.power_on_vm(vm_id, vm_spec.get('service_level'))
+            if wait_for:
+                self._wait_until(vm_id, "PowerON")
+                for i in range(0, DEPLOY_VM_SLEEP_COUNT):
+                    vm_info = self._mdxlib.get_vm_info(vm_id)
+                    private_ip_address = vm_info["service_networks"][0]["ipv4_address"][0]
+                    logger.debug("{} {}".format(i, private_ip_address))
+                    if re.match(r"^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$", private_ip_address) is not None:
+                        break
+                    time.sleep(SLEEP_TIME_SEC)
+                else:
+                    raise MdxRestException("{}: timeout: allocate ip address".format(vm_name))
 
         return self._mdxlib.get_vm_info(vm_id)
 
@@ -199,8 +255,9 @@ class MdxResourceExt(object):
         vm_id = self._find_vm(vm_name)
 
         vm_info = self._get_vm_info_by_id(vm_id)
-        if vm_info["status"] != "PowerOFF":
-            raise MdxRestException("mdxext: destroy_vm vm status is not PowerOFF but {}, please power_off first".format(vm_info["status"]))
+        if vm_info["status"] not in DELETABLE_STATE:
+            raise MdxRestException(
+                "mdxext: destroy_vm vm status is not PowerOFF or Deallocated but {}, please power_off first".format(vm_info["status"]))
 
         # TODO: 仮想マシンの事前状態のチェックがmdx rest api側にない?
         self._mdxlib.destroy_vm(vm_id)
@@ -216,7 +273,7 @@ class MdxResourceExt(object):
         else:
             raise MdxRestException("destroy_vm is failed: {}".format(vm_name))
 
-    def power_on_vm(self, vm_name, wait_for=True):
+    def power_on_vm(self, vm_name, service_level="spot", wait_for=True):
         """
         仮想マシンの起動 (PowerON) を実行する。
 
@@ -230,9 +287,11 @@ class MdxResourceExt(object):
         if vm_info["status"] == "PowerON":
             logger.debug("vm is already power on")
             return
-        if vm_info["status"] != "PowerOFF":
-            raise MdxRestException("mdxext: power_off_vm vm status is not PowerOFF but {}".format(vm_info["status"]))
-        self._mdxlib.power_on_vm(vm_id)
+        if vm_info["status"] not in DELETABLE_STATE:
+            raise MdxRestException(
+                "mdxext: power_off_vm vm status is not PowerOFF or deallocated but {}".format(
+                    vm_info["status"]))
+        self._mdxlib.power_on_vm(vm_id, service_level)
         if wait_for:
             self._wait_until(vm_id, "PowerON")
 
@@ -247,8 +306,8 @@ class MdxResourceExt(object):
         vm_id = self._find_vm(vm_name)
 
         vm_info = self._get_vm_info_by_id(vm_id)
-        if vm_info["status"] == "PowerOFF":
-            logger.debug("vm is already power off")
+        if vm_info["status"] in DELETABLE_STATE:
+            logger.debug("vm is already power off or deallocated")
             return
         if vm_info["status"] != "PowerON":
             raise MdxRestException("mdxext: power_off_vm vm status is not PowerON but {}".format(vm_info["status"]))
@@ -269,13 +328,13 @@ class MdxResourceExt(object):
 
         vm_info = self._get_vm_info_by_id(vm_id)
         # 事前条件　PowerOn
-        if vm_info["status"] == "PowerOFF":
-            logger.debug("vm is already power off")
+        if vm_info["status"] in DELETABLE_STATE:
+            logger.debug("vm is already power off or deallocated")
             return
         if vm_info["status"] != "PowerON":
             raise MdxRestException("mdxext: power_shutdown_vm vm status is not PowerON but {}".format(vm_info["status"]))
         # TODO: 操作履歴IDを返す?
-        self._mdxlib.power_off_vm(vm_id)
+        self._mdxlib.shutdown_vm(vm_id)
 
         if wait_for:
             self._wait_until(vm_id, "PowerOFF")
@@ -313,48 +372,48 @@ class MdxResourceExt(object):
         .. code-block:: json
 
           {
-            "name": 仮想マシン名
-            "vm_id": 仮想マシンID
-            "os_type": OSタイプ
-            "status": 仮想マシンの状態 "PowerON" "PowerOFF" "Suspended" "NotFound" "Deploying" "Detached" のいずれか
+            "name": "仮想マシン名",
+            "vm_id": "仮想マシンID",
+            "os_type": "OSタイプ",
+            "status": "仮想マシンの状態",
             "vmware_tools": [
                {
-                 "status": VMware Tools状態
-                 "version": VMware Toolsバージョン
+                 "status": "VMware Tools状態",
+                 "version": "VMware Toolsバージョン"
                }
             ],
-            "cpu": CPU数
-            "memory": メモリ量の文字列表現 (例: "2 GB")
-            "gpu": GPU数の文字列表現 (例: "1")
+            "cpu": "CPU数",
+            "memory": "メモリ量の文字列表現",
+            "gpu": "GPU数の文字列表現",
             "service_networks": [
               {
-                "adapter_number": ネットワーク番号
-                "ipv4_address": IPv4アドレスのリスト
-                "ipv6_address": IPv6アドレスのリスト
-                "segment": ネットワークセグメント名
+                "adapter_number": "ネットワーク番号",
+                "ipv4_address": "IPv4アドレスのリスト",
+                "ipv6_address": "IPv6アドレスのリスト",
+                "segment": "ネットワークセグメント名"
               }
             ],
             "storage_networks": [
               {
-                "adapter_number": ネットワーク番号
-                "ipv4_address": IPv4アドレスのリスト
-                "ipv6_address": IPv6アドレスのリスト
-                "type": ネットワークタイプ "sr-iov", "pvrdma", "portgroup" のいずれか
+                "adapter_number": "ネットワーク番号",
+                "ipv4_address": "IPv4アドレスのリスト",
+                "ipv6_address": "IPv6アドレスのリスト",
+                "type": "ネットワークタイプ"
               }
             ],
             "hard_disks": [
               {
-                "disk_number": 仮想ディスク番号
-                "device_key": 仮想ディスクデバイスキー
-                "capacity": 仮想ディスクサイズ
-                "datastore": データストア名
+                "disk_number": "仮想ディスク番号",
+                "device_key": "仮想ディスクデバイスキー",
+                "capacity": "仮想ディスクサイズ",
+                "datastore": "データストア名"
               }
             ],
-            "dvd_media": ゲストOSがマウントしているISOイメージ
-            "vcenter": vCenter名
-            "esxi": ESXi名
-            "pack_type": パックタイプ "cpu", "gpu" のいずれか
-            "pack_num": パック数
+            "dvd_media": "ゲストOSがマウントしているISOイメージ",
+            "vcenter": "vCenter名",
+            "esxi": "ESXi名",
+            "pack_type": "パックタイプ",
+            "pack_num": "パック数"
           }
 
         """
@@ -374,11 +433,11 @@ class MdxResourceExt(object):
 
           [
             {
-              "uuid": 仮想マシンID
-              "name": 仮想マシン名
-              "status": 仮想マシン状態 "PowerON" "PowerOFF" "Suspended" "NotFound" "Deploying" "Detached" のいずれか
-              "vcenter": vCenter名
-              "running_tasks": 実行中のタスクのリスト
+              "uuid": "仮想マシンID",
+              "name": "仮想マシン名",
+              "status": "仮想マシンのステータス",
+              "vcenter": "vCenter名",
+              "running_tasks": "実行中のタスクのリスト",
             }
           ]
 
@@ -396,22 +455,56 @@ class MdxResourceExt(object):
 
           [
             {
-              "uuid": カタログID
-              "name": カタログ名
-              "type": カタログのタイプ
-              "template_name": vCenter上の仮想マシンテンプレート名
-              "os_type": OS種別 "Linux", "Windows" のいずれか
-              "os_name": OS名 (例: "CentOS")
-              "os_version": OSバージョン
-              "hw_version": ハードウェアバージョン
-              "description": 説明
-              "login_username": OSログインユーザ名
+              "uuid": "カタログID",
+              "name": "カタログ名",
+              "type": "カタログのタイプ",
+              "template_name": "vCenter上の仮想マシンテンプレート名",
+              "os_type": "OS種別",
+              "os_name": "OS名",
+              "os_version": "OSバージョン",
+              "hw_version": "ハードウェアバージョン",
+              "description": "説明",
+              "login_username": "OSログインユーザ名"
             }
           ]
 
         """
         self._check_project_id()
         return self._mdxlib.get_vm_catalogs(self._project_id)
+
+    def get_vm_history(self, vm_name):
+        """
+        仮想マシンの操作履歴情報を取得する
+
+        :param vm_name: 仮想マシン名
+
+        :returns: 以下のような、仮想マシン操作履歴情報
+
+        .. code-block:: json
+
+          [
+            {
+                "uuid": "操作ID",
+                "project": "プロジェクト名",
+                "user_name": "ユーザ名",
+                "type": "操作種別",
+                "object_uuid": "対象ID",
+                "object_name": "対象名",
+                "start_datetime": "開始日時",
+                "end_datetime": "終了日時",
+                "status": "ステータス",
+                "progress": "進捗",
+                "error_message": "エラーメッセージ",
+                "error_detail": "エラー詳細"
+            }
+          ]
+
+        """
+        self._check_project_id()
+        vm_id = self._get_vm_id_by_vm_name(vm_name)
+        if vm_id is None:
+            return None
+        return self._mdxlib.get_vm_history(vm_id)
 
     def get_assigned_projects(self):
         """
@@ -423,14 +516,14 @@ class MdxResourceExt(object):
 
           [
             {
-              "uuid": 機関ID
-              "name": 機関名
+              "uuid": "機関ID",
+              "name": "機関名",
               "projects": [
                  {
-                    "uuid": プロジェクトID
-                    "name": プロジェクト名
-                    "type": プロジェクトのタイプ "専有" "通常" のいずれか
-                    "expired": プロジェクトの期限が切れたか否か (boolean)
+                    "uuid": "プロジェクトID",
+                    "name": "プロジェクト名",
+                    "type": "プロジェクトのタイプ",
+                    "expired": "プロジェクトの期限が切れたか否か (boolean)"
                  }
               ]
             }
@@ -456,23 +549,22 @@ class MdxResourceExt(object):
                 if proj["name"] == project_name:
                     self._project_id = proj["uuid"]
                     return
-        else:
-            # 見つからない場合
-            raise MdxRestException("mdx_ext: project {} is not found".format(project_name))
+
+        raise MdxRestException(f"mdx_ext: project {project_name} is not found")
 
     def get_current_project(self):
         """
         操作対象のmdxのプロジェクトの取得
 
-        :returns: 以下のような、プロジェクトに属するAllow ACL IPv4の情報のリスト
+        :returns: 以下のような、プロジェクト情報
 
         .. code-block:: json
 
           {
-             "uuid": プロジェクトID
-             "name": プロジェクト名
-             "type": プロジェクトのタイプ "専有" "通常" のいずれか
-             "expired": プロジェクトの期限が切れたか否か (boolean)
+             "uuid": "プロジェクトID",
+             "name": "プロジェクト名",
+             "type": "プロジェクトのタイプ",
+             "expired": "プロジェクトの期限が切れたか否か"
           }
 
         """
@@ -483,9 +575,7 @@ class MdxResourceExt(object):
             for proj in org["projects"]:
                 if proj["uuid"] == self._project_id:
                     return proj
-        else:
-            # 見つからない場合
-            return None
+        return None
 
     # network
     def get_allow_acl_ipv4_info(self, segment_id):
@@ -499,14 +589,14 @@ class MdxResourceExt(object):
 
           [
             {
-              "uuid": Allo ACL IPv4 ID
-              "src_address": Srcアドレス
-              "src_mask":  Srcマスク (string で指定　例: "24")
-              "src_port": Srcポート (string)
-              "dst_address": Dstアドレス
-              "dst_mask": Dstマスク(string で指定　例: "24")
-              "dst_port": Dstポート (string)
-              "protocol": プロトコル "ICMP" "TCP" "UDP" のいずれか
+              "uuid": "Allow ACL IPv4 ID",
+              "src_address": "Srcアドレス",
+              "src_mask":  "Srcマスク",
+              "src_port": "Srcポート",
+              "dst_address": "Dstアドレス",
+              "dst_mask": "Dstマスク",
+              "dst_port": "Dstポート",
+              "protocol": "プロトコル"
             }
           ]
 
@@ -523,19 +613,42 @@ class MdxResourceExt(object):
         .. code-block:: json
 
           {
-            "segment": ネットワークセグメントID
-            "src_address": Src IPv4アドレス
-            "src_mask": Srcマスク
-            "src_port": Srcポート
-            "dst_address": Dst IPv4アドレス
-            "dst_mask": Dstマスクの文字列表現
-            "dst_port": Dstポートの文字列表現
-            "protocol": プロトコル "ICMP" "TCP" "UDP" のいずれか
+            "segment": "ネットワークセグメントID",
+            "src_address": "Src IPv4アドレス",
+            "src_mask": "Srcマスク",
+            "src_port": "Srcポート",
+            "dst_address": "Dst IPv4アドレス",
+            "dst_mask": "Dstマスクの文字列表現",
+            "dst_port": "Dstポートの文字列表現",
+            "protocol": "プロトコル"
           }
 
         """
         self._check_project_id()
         return self._mdxlib.add_allow_acl_ipv4_info(allow_acl_spec)
+
+    def edit_allow_acl_ipv4_info(self, allow_acl_id, allow_acl_spec):
+        """
+        指定したAllow ACL IPv4を編集する
+
+        :param allow_acl_spec: 以下のような、登録するAllow ACL IPv4の仕様
+
+        .. code-block:: json
+
+          {
+            "src_address": "Src IPv4アドレス",
+            "src_mask": "Srcマスク",
+            "src_port": "Srcポート",
+            "dst_address": "Dst IPv4アドレス",
+            "dst_mask": "Dstマスクの文字列表現",
+            "dst_port": "Dstポートの文字列表現",
+            "protocol": "プロトコル"
+          }
+
+        """
+        self._check_project_id()
+        return self._mdxlib.edit_allow_acl_ipv4_info(allow_acl_id,
+                                                     allow_acl_spec)
 
     def delete_allow_acl_ipv4_info(self, acl_ipv4_id):
         """
@@ -543,6 +656,85 @@ class MdxResourceExt(object):
         """
         self._check_project_id()
         self._mdxlib.delete_allow_acl_ipv4_info(acl_ipv4_id)
+
+    def get_allow_acl_ipv6_info(self, segment_id):
+        """
+        Allow ACL IPv6情報の取得
+
+        :param segment_id: ネットワークセグメントID
+        :returns: 以下のような、プロジェクトに属するAllow ACL IPv6の情報のリスト
+
+        .. code-block:: json
+
+          [
+            {
+              "uuid": "Allow ACL IPv6 ID",
+              "src_address": "Srcアドレス",
+              "src_mask":  "Srcマスク",
+              "src_port": "Srcポート",
+              "dst_address": "Dstアドレス",
+              "dst_mask": "Dstマスク",
+              "dst_port": "Dstポート",
+              "protocol": "プロトコル"
+            }
+          ]
+
+        """
+        self._check_project_id()
+        return self._mdxlib.get_allow_acl_ipv6_info(segment_id)
+
+    def add_allow_acl_ipv6_info(self, allow_acl_spec):
+        """
+        指定したセグメントにAllow ACL IPv6を追加する
+
+        :param allow_acl_spec: 以下のような、追加するAllow ACL IPv6の仕様
+
+        .. code-block:: json
+
+          {
+            "segment": "ネットワークセグメントID",
+            "src_address": "Src IPv6アドレス",
+            "src_mask": "Srcマスク",
+            "src_port": "Srcポート",
+            "dst_address": "Dst IPv6アドレス",
+            "dst_mask": "Dstマスクの文字列表現",
+            "dst_port": "Dstポートの文字列表現",
+            "protocol": "プロトコル"
+          }
+
+        """
+        self._check_project_id()
+        return self._mdxlib.add_allow_acl_ipv6_info(allow_acl_spec)
+
+    def edit_allow_acl_ipv6_info(self, allow_acl_id, allow_acl_spec):
+        """
+        指定したAllow ACL IPv6を編集する
+
+        :param allow_acl_spec: 以下のような、登録するAllow ACL IPv6の仕様
+
+        .. code-block:: json
+
+          {
+            "src_address": "Src IPv6アドレス",
+            "src_mask": "Srcマスク",
+            "src_port": "Srcポート",
+            "dst_address": "Dst IPv6アドレス",
+            "dst_mask": "Dstマスクの文字列表現",
+            "dst_port": "Dstポートの文字列表現",
+            "protocol": "プロトコル"
+          }
+
+        """
+        self._check_project_id()
+        return self._mdxlib.edit_allow_acl_ipv6_info(allow_acl_id,
+                                                     allow_acl_spec)
+
+    def delete_allow_acl_ipv6_info(self, acl_ipv6_id):
+        """
+        :param acl_ipv6_id: 削除対象の Allow ACL IPv6 ID
+        """
+        self._check_project_id()
+        self._mdxlib.delete_allow_acl_ipv6_info(acl_ipv6_id)
 
     # project
     def get_project_history(self):
@@ -555,18 +747,18 @@ class MdxResourceExt(object):
 
           [
             {
-              "uuid": 操作履歴ID
-              "project": プロジェクトID
-              "user_name": 操作ユーザ名
-              "type": 操作種別
-              "object_uuid": 操作対象オブジェクトID
-              "object_name": 操作対象オブジェクト名
-              "start_datetime": 開始日付 (YYYY-mm-dd HH:MM:SS)
-              "end_datetime": 終了日付 (YYYY-mm-dd HH:MM:SS)
-              "status": ステータス "Running" "Completed" "Failed" のいずれか
-              "progress": 進捗率 (%)
-              "error_message": エラーメッセージ
-              "error_detail": エラー詳細
+              "uuid": "操作履歴ID",
+              "project": "プロジェクトID",
+              "user_name": "操作ユーザ名",
+              "type": "操作種別",
+              "object_uuid": "操作対象オブジェクトID",
+              "object_name": "操作対象オブジェクト名",
+              "start_datetime": "開始日付 (YYYY-mm-dd HH:MM:SS)",
+              "end_datetime": "終了日付 (YYYY-mm-dd HH:MM:SS)",
+              "status": "ステータス",
+              "progress": "進捗率",
+              "error_message": "エラーメッセージ",
+              "error_detail": "エラー詳細"
             }
           ]
         """
@@ -583,7 +775,9 @@ class MdxResourceExt(object):
         page_size = 100
         # ページ番号で制御する(URLではなく)
         while True:
-            vm_list = self._mdxlib.get_vm_list(self._project_id, page=current_page, page_size=page_size)
+            vm_list = self._mdxlib.get_vm_list(self._project_id,
+                                               page=current_page,
+                                               page_size=page_size)
             for vm_info in vm_list["results"]:
                 yield vm_info
             # VM情報のロックが必要? (ページをめくる間にVMが増減したらどうするか?)
@@ -598,15 +792,21 @@ class MdxResourceExt(object):
         """
         self._check_project_id()
         current_page = 1
-        page_size = 100
+        page_size = 10000
         while True:
-            history_list = self._mdxlib.get_project_history(self._project_id, page=current_page, page_size=page_size)
+            history_list = self._mdxlib.get_project_history(self._project_id,
+                                                            page=current_page,
+                                                            page_size=page_size)
             for history in history_list["results"]:
                 yield history
 
             if history_list["next"] is None:
                 return
             current_page += 1
+
+    def get_assignable_global_ipv4(self):
+        self._check_project_id()
+        return self._mdxlib.get_assignable_global_ipv4(self._project_id)
 
     def dnat_iter(self):
         self._check_project_id()
@@ -631,9 +831,9 @@ class MdxResourceExt(object):
 
           [
             {
-              "uuid": ネットワークセグメントID
-              "name": ネットワークセグメント名
-              "default": プロジェクト作成時に作成されるデフォルトのネットワークセグメントか否か(boolean)
+              "uuid": "ネットワークセグメントID",
+              "name": "ネットワークセグメント名",
+              "default": "プロジェクト作成時に作成されるデフォルトのネットワークセグメントか否か"
             }
           ]
 
@@ -651,9 +851,9 @@ class MdxResourceExt(object):
         .. code-block:: json
 
           {
-            "vlan_id": VLAN ID
-            "vni": VNI
-            "ip_range": IPアドレス範囲
+            "vlan_id": "VLAN ID",
+            "vni": "VNI",
+            "ip_range": "IPアドレス範囲"
           }
 
         """
@@ -670,10 +870,10 @@ class MdxResourceExt(object):
 
           [
             {
-              "uuid": DNAT ID
-              "pool_address": 転送元グローバルIPv4アドレス
-              "segument": セグメント名
-              "dst_address": 転送先プライベートIPアドレス
+              "uuid": "DNAT ID",
+              "pool_address": "転送元グローバルIPv4アドレス",
+              "segument": "セグメント名",
+              "dst_address": "転送先プライベートIPアドレス"
             }
           ]
 
@@ -689,9 +889,9 @@ class MdxResourceExt(object):
         .. code-block:: json
 
           {
-            "pool_address": 転送元グローバルIPv4アドレス。プロジェクトの未使用グローバルIPアドレスを指定する。
-            "segment": ネットワークセグメントID
-            "dst_address": 転送先プライベートIPアドレス。セグメントIPアドレス範囲内のIPアドレスを指定する。
+            "pool_address": "転送元グローバルIPv4アドレス。プロジェクトの未使用グローバルIPアドレスを指定する。",
+            "segment": "ネットワークセグメントID",
+            "dst_address": "転送先プライベートIPアドレス。セグメントIPアドレス範囲内のIPアドレスを指定する。"
           }
 
         """
@@ -708,9 +908,9 @@ class MdxResourceExt(object):
         .. code-block:: json
 
           {
-            "pool_address": 転送元グローバルIPv4アドレス。プロジェクトの未使用グローバルIPアドレスを指定する。
-            "segment": ネットワークセグメントID
-            "dst_address": 転送先プライベートIPアドレス。セグメントIPアドレス範囲内のIPアドレスを指定する。
+            "pool_address": "転送元グローバルIPv4アドレス。プロジェクトの未使用グローバルIPアドレスを指定する。",
+            "segment": "ネットワークセグメントID",
+            "dst_address": "転送先プライベートIPアドレス。セグメントIPアドレス範囲内のIPアドレスを指定する。"
           }
 
         """
@@ -723,7 +923,7 @@ class MdxResourceExt(object):
 
         :param dnat_id: DNAT ID
         """
-        self._mdxlib.delete_dnat(dnat_id)
+        self._mdxlib.delete_dnat(self._project_id, dnat_id)
         # 返り値なし
 
     def _get_vm_id_by_vm_name(self, vm_name):
@@ -751,7 +951,8 @@ class MdxResourceExt(object):
         for _i in range(0, SLEEP_COUNT):
             time.sleep(SLEEP_TIME_SEC)
             vm_info = self._mdxlib.get_vm_info(vm_id)
-            logger.debug("waiting expected: {} actual: {}".format(status, vm_info["status"]))
+            logger.debug("waiting expected: {} actual: {}".format(
+                status, vm_info["status"]))
 
             if vm_info["status"] == status:
                 break
@@ -774,7 +975,7 @@ def use_ipv4_only():
 
 
 # 簡易テスト
-def test(auth_info):
+def test(token):
     # 仮想マシンの仕様
     pack_num = 4
     pack_type = "cpu"
@@ -787,7 +988,6 @@ def test(auth_info):
 
     vm_name = "python_test"
     ssh_shared_key_path = "/home/mdxuser/.ssh/id_rsa_mdx.pub"
-    # ssh_private_key_path = "/home/mdxuser/.ssh/id_rsa_mdx"
 
     # loggerの設定
     handler = logging.StreamHandler(sys.stdout)
@@ -798,8 +998,7 @@ def test(auth_info):
     logger.setLevel(logging.DEBUG)
 
     # main
-    mdx = MdxResourceExt()
-    mdx.login(auth_info)
+    mdx = MdxResourceExt(token)
 
     projects = mdx.get_assigned_projects()
     logger.debug(projects)
@@ -919,17 +1118,9 @@ def test(auth_info):
 
 if __name__ == "__main__":
     # test
-    username = sys.argv[1]
-    password = sys.argv[2]
-
-    # main
-    auth_info = dict(
-        username=username,
-        password=password,
-    )
-
+    token = sys.argv[1]
     # mini test
     # mdx = MdxResourceExt()
-    # mdx.login(auth_info)
+    # mdx.login(token)
 
-    test(auth_info)
+    test(token)
