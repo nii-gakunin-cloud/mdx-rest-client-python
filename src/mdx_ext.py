@@ -11,7 +11,8 @@ import re
 import sys
 import time
 
-from .mdx_lib import MdxLib, MdxRestException, DEFAULT_MDX_ENDPOINT
+from .mdx_lib import (MdxLib, MdxRestException,
+                      MdxVMNotFoundException, DEFAULT_MDX_ENDPOINT)
 
 SLEEP_TIME_SEC = 5
 SLEEP_COUNT = 120
@@ -91,9 +92,10 @@ class MdxResourceExt(object):
     """
     # initの説明
 
-    def __init__(self, init_token=None, endpoint=DEFAULT_MDX_ENDPOINT):
+    def __init__(self, init_token=None, endpoint=DEFAULT_MDX_ENDPOINT, log_level=logging.INFO):
         self._mdxlib = MdxLib(endpoint=endpoint, init_token=init_token)
         self._project_id = None
+        logger.setLevel(log_level)
 
     def _check_project_id(self):
         if self._project_id is None:
@@ -163,10 +165,42 @@ class MdxResourceExt(object):
         vm_spec["vm_name"] = vm_name
 
         deployed_vm_tasks = self._mdxlib.deploy_vm(vm_spec)
-        if wait_for:
-            for vm_task in deployed_vm_tasks:
-                vm_id = vm_task['object_uuid']
+        vm_infos = []
+        for task_id in deployed_vm_tasks:
+            task_wait_time = 300 if wait_for else 0
+            task_info = self._mdxlib._get_vm_task_info(self._project_id, task_id, timeout=task_wait_time)
+
+            if wait_for:
+                for _ in range(0, task_wait_time):
+                    if task_info['status'] == "Running":
+                        time.sleep(1)
+                        task_info = self._mdxlib._get_vm_task_info(self._project_id, task_id, timeout=task_wait_time)
+                    else:
+                        break
+            vm_id = task_info['object_uuid']
+            try:
+                # マシン起動試行直後はパラメータが空のマシン情報だけが存在している場合もある
+                # その場合はマシン情報が返ってくるまで待つ
+                for _ in range(10):
+                    vm_info = self._mdxlib.get_vm_info(vm_id)
+                    if vm_info["name"] == vm_name:
+                        break
+                    time.sleep(5)
+            except MdxVMNotFoundException as e:
+                # マシン名重複などにより起動に失敗した場合
+                # マシン情報が存在しないため、タスク情報から取る
+                print("vm {} deploy failed: {}".format(vm_name, e))
+                vm_infos.append({"vm_id": task_info['object_uuid'],
+                                 "name": task_info['object_name'],
+                                 "task_error_message": task_info['error_message'],
+                                 "task_error_detail": task_info['error_detail'],
+                                 "task_status": task_info['status'],
+                                 })
+                continue
+
+            if wait_for:
                 self._wait_until(vm_id, "PowerON")
+
                 for i in range(0, DEPLOY_VM_SLEEP_COUNT):
                     vm_info = self._mdxlib.get_vm_info(vm_id)
                     private_ip_address = vm_info["service_networks"][0]["ipv4_address"][0]
@@ -178,9 +212,10 @@ class MdxResourceExt(object):
                         time.sleep(SLEEP_TIME_SEC)
                 else:
                     raise MdxRestException("{}: timeout: allocate ip address".format(vm_name))
-        vm_infos = []
-        for task in deployed_vm_tasks:
-            vm_infos.append(self._mdxlib.get_vm_info(task['object_uuid']))
+
+            vm_info = self._mdxlib.get_vm_info(vm_id)
+            vm_info["task_status"] = task_info['status']
+            vm_infos.append(vm_info)
         return vm_infos
 
     def clone_vm(self, original_vm_name, vm_name, vm_spec, power_on=False, wait_for=True):

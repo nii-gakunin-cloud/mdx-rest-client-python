@@ -18,6 +18,18 @@ class MdxRestException(Exception):
         self.status_code = status_code
 
 
+class MdxVMNotFoundException(MdxRestException):
+    def __init__(self, message, status_code=0):
+        self.message = message
+        self.status_code = status_code
+
+
+class MdxTimeoutException(MdxRestException):
+    def __init__(self, message, status_code=0):
+        self.message = message
+        self.status_code = status_code
+
+
 class MdxLib(object):
     """
     mdxのREST APIに対応したpythonライブラリ
@@ -111,20 +123,20 @@ class MdxLib(object):
         width = max(len(start), len(end))
         return [f"{prefix}{str(i).zfill(width)}{suffix}" for i in range(int(start), int(end) + 1)]
 
-    def _get_task_info(self, project_id, vm_name, task_id):
+    def _get_vm_task_info(self, project_id, task_id, vm_name=None, timeout=300):
 
-        vm_info = None
-        for _ in range(10):
-            vm_info = self._get_vm_info_by_name(project_id, vm_name)
-            if vm_info is not None:
-                break
-            time.sleep(10)
-        vm_histories = self.get_vm_history(vm_info['uuid'])
-        for vm_history in vm_histories['results']:
-            if vm_history['uuid'] == task_id:
-                return vm_history
+        vm_histories = self.get_project_history(project_id, page=1,
+                                                page_size=10, object_name=vm_name)
+        for _ in range(timeout):
+            for vm_history in vm_histories['results']:
+                if vm_history['uuid'] == task_id:
+                    return vm_history
             else:
-                return None
+                time.sleep(1)
+        else:
+            raise MdxTimeoutException(
+                "mdxlib: timeout: get vm task info: {}".format(task_id)
+            )
 
     def refresh_token(self):
         self._refresh_token()
@@ -192,16 +204,7 @@ class MdxLib(object):
         # task id が返る
         logger.debug("deploy vm: {}".format(res.text))
         task_ids = res.json()['task_id']
-        vm_names = self._predict_vmnames(mdx_vm_spec['vm_name'])
-        tasks = []
-        for vm_name in vm_names:
-            for i, task_id in enumerate(task_ids):
-                task_info = self._get_task_info(mdx_vm_spec['project'], vm_name, task_id)
-                if task_info is not None:
-                    tasks.append(task_info)
-                    del task_ids[i]
-                    break
-        return tasks
+        return task_ids
 
     def clone_vm(self, original_vm_id: str, mdx_vm_spec: dict):
         """
@@ -315,11 +318,12 @@ class MdxLib(object):
             )
         return res.json()
 
-    def get_project_history(self, project_id, page=1, page_size=10000):
+    def get_project_history(self, project_id, page=1, page_size=10000, **kwargs):
         data = dict(
             page=page,
             page_size=page_size,
         )
+        data.update(kwargs)
         res = self._call_api(
             "/api/history/project/{}/".format(project_id), data=data, method="GET"
         )
@@ -386,6 +390,11 @@ class MdxLib(object):
         ```
         """
         res = self._call_api("/api/vm/{}/".format(vm_id), method="GET")
+        if res.status_code == 404:
+            raise MdxVMNotFoundException(
+                "mdxlib: vm is not found: {}".format(vm_id),
+                status_code=res.status_code,
+            )
         if res.status_code != 200:
             raise MdxRestException(
                 "mdxlib: get vm info is failed: {}".format(res.text),
